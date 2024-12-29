@@ -1,0 +1,22 @@
+/* CodeEditor.css */
+
+/* Main container for the editor */
+.code-editor-container {
+    height: 100vh;
+    display: flex;
+  }
+  
+  /* Left column for the problem statement */
+  .problem-statement {
+    width: 30%;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #f9f9f9; /* Optional: Add a light background color */
+  }
+  
+  /* Right column for the code editor */
+  .code-editor {
+    width: 70%;
+  }
+  
