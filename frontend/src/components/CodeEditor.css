@@ -4,6 +4,7 @@
 .code-editor-container {
     height: 100vh;
     display: flex;
+    background: none;
   }
   
   /* Left column for the problem statement */
@@ -19,4 +20,5 @@
   .code-editor {
     width: 70%;
   }
+  
   

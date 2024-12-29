@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useEffect } from 'react';
 
 import Input from './input.jsx';
 import Button from './button.jsx';
@@ -26,6 +27,14 @@ function Login() {
         console.log(`${platform} icon clicked!`);
       }
     };
+    useEffect(() => {
+      document.body.classList.add('login-active');
+  
+      // Clean up: Remove the class when the component is unmounted
+      return () => {
+        document.body.classList.remove('login-active');
+      };
+    }, []);
   return (
     <MainContainer>
       <WelcomeText>Welcome</WelcomeText>
