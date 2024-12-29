@@ -5,13 +5,23 @@
   padding: 0;
   box-sizing: border-box;
 }
-body{
+/*body{
   font-family: "Raleway", sans-serif;
-  background-image: url('./background.jpg');
+   background-image: url('./background.jpg');
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100vw;
-}
+}*/
+body.login-active {
+    background-image: url('./background.jpg');
+    background-size: cover;
+    font-family: "Raleway", sans-serif;
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+  }
