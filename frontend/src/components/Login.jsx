@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Input from './input.jsx';
 import Button from './button.jsx';
 import Icon from './Icon.jsx';
-
+import './Login.css';
 import {FaFacebookF,FaInstagram,FaTwitter} from 'react-icons/fa';
 
 function Login() {
