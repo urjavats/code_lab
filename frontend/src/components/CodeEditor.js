@@ -22,7 +22,8 @@ function CodeEditor() {
   const editorRef = useRef(null);
   const [isChatLoading, setIsChatLoading] = useState(false);
 const [chatResponse, setChatResponse] = useState('');
-const genAI = new GoogleGenerativeAI('AIzaSyClpzTgJKA2VIw3OPPY5OE2Rbwwejsv5F0');
+const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
+
 const [isChatOpen, setIsChatOpen] = useState(false);
 
 const handleChatbot = async () => {
