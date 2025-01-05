@@ -16,7 +16,7 @@
   width: 100vw;
 }*/
 body.login-active {
-    background-image: url('./background.jpg');
+    background-image: url('./back.jpg');
     background-size: cover;
     font-family: "Raleway", sans-serif;
      display: flex;
