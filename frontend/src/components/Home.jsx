@@ -64,7 +64,7 @@ function Home() {
       {joinRoomVisible && (
         <div className="popup-overlay">
           <div className="popup">
-            <h2>Join Room</h2>
+            <h2>Create Room</h2>
             <form>
               <input type="text" placeholder="Room Name" className="form-input" />
               <select className="form-select">
