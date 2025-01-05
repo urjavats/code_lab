@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 
 
-export default function input({type,placeholder}){
-    return <StyledInput type={type} placeholder={placeholder}/>;
+export default function Input({type, placeholder, value, onChange}){
+    return <StyledInput type={type} placeholder={placeholder} value={value}
+    onChange={onChange}/>;
 }
 const StyledInput= styled.input`
  background: rgba(255, 255, 255, 0.15);

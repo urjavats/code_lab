@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useEffect } from 'react';
-
+import axios from 'axios'; // Import axios for API calls
 import Input from './input.jsx';
 import Button from './button.jsx';
 import Icon from './Icon.jsx';
 import './Login.css';
-import {FaFacebookF,FaInstagram,FaTwitter} from 'react-icons/fa';
+
+import { useNavigate } from 'react-router-dom';
+import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
 
 function Login() {
   const FacebookBackground =
@@ -15,63 +16,118 @@ function Login() {
     "linear-gradient(to right, #A12AC4 0%, #ED586C 40%, #F0A853 100%)";
   const TwitterBackground =
     "linear-gradient(to right, #56C1E1 0%, #35A9CE 50%)";
-    const handleIconClick = (platform) => {
-      if (platform === 'Instagram') {
-        window.open('https://www.instagram.com/leetcodeofficial/?hl=en', '_blank');
-      }if (platform === 'Twitter') {
-        window.open('https://x.com/leetcode?lang=en', '_blank');
-      }if (platform === 'Facebook') {
-        window.open('https://www.facebook.com/LeetCode/', '_blank');
-      }
-       else {
-        console.log(`${platform} icon clicked!`);
-      }
-    };
-    useEffect(() => {
-      document.body.classList.add('login-active');
   
-      // Clean up: Remove the class when the component is unmounted
-      return () => {
-        document.body.classList.remove('login-active');
-      };
-    }, []);
+  const handleIconClick = (platform) => {
+    const urls = {
+      Facebook: 'https://www.facebook.com/LeetCode/',
+      Instagram: 'https://www.instagram.com/leetcodeofficial/?hl=en',
+      Twitter: 'https://x.com/leetcode?lang=en',
+    };
+    window.open(urls[platform], '_blank');
+  };
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Email:", email, "Password:", password);
+
+    if (!email || !password) {
+      setError('Please fill in all fields!');
+      setMessage('');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/user/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      console.log('Server Response:', data);
+      if (response.ok && data.status === 'SUCCESS') {
+        setMessage('Login successful!');
+        setError('');
+        setTimeout(() => {
+          navigate('/home');  
+        }, 2000);
+        // Handle successful login logic, e.g., navigate to the dashboard
+      } else {
+        setError(data.message || 'Login failed.');
+        setMessage('');
+      }
+    } catch (error) {
+      setError('Error connecting to the server.');
+      setMessage('');
+      console.error(error);
+    }
+  };
+  
+
+  useEffect(() => {
+    document.body.classList.add('login-active');
+    return () => {
+      document.body.classList.remove('login-active');
+    };
+  }, []);
+
   return (
     <MainContainer>
       <WelcomeText>Welcome</WelcomeText>
       <InputContainer>
-      <Input type="text" placeholder="Email" />
-      <Input type="password" placeholder="password" />
+      <Input
+  type="text"
+  placeholder="Email"
+  value={email}
+  onChange={(e) =>{
+    console.log(e.target.value);
+    setEmail(e.target.value)}} // Make sure this is being properly updated
+/>
+<Input
+  type="password"
+  placeholder="Password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)} // Same here
+/>
+
       </InputContainer>
       <ButtonContainer>
-        <Button content="Sign Up"/>
+        <Button content="Sign In" onClick={handleSubmit} />
       </ButtonContainer>
-      <LoginWith>Or Login With</LoginWith>
-      <HorizontalRule/>
+      <LoginWith>Don't have an account? <a href="/register">Sign up</a></LoginWith>
+      <HorizontalRule />
       <IconsContainer>
-  <Icon 
-    color={FacebookBackground} 
-    onClick={() => handleIconClick('Facebook')}
-  >
-    <FaFacebookF />
-  </Icon>
-  <Icon 
-    color={InstagramBackground} 
-    onClick={() => handleIconClick('Instagram')}
-  >
-    <FaInstagram />
-  </Icon>
-  <Icon 
-    color={TwitterBackground} 
-    onClick={() => handleIconClick('Twitter')}
-  >
-    <FaTwitter />
-  </Icon>
-</IconsContainer>
-      <ForgotPassword>Forgot Password ?</ForgotPassword>
+        <Icon color={FacebookBackground} onClick={() => handleIconClick('Facebook')}>
+          <FaFacebookF />
+        </Icon>
+        <Icon color={InstagramBackground} onClick={() => handleIconClick('Instagram')}>
+          <FaInstagram />
+        </Icon>
+        <Icon color={TwitterBackground} onClick={() => handleIconClick('Twitter')}>
+          <FaTwitter />
+        </Icon>
+      </IconsContainer>
+      <ForgotPassword>Forgot Password?</ForgotPassword>
+      {message && <Message>{message}</Message>}
     </MainContainer>
-  )
+  );
 }
 
+const Message = styled.p`
+  color: #ff3333;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+`;
+
+// Existing styled-components here...
 const MainContainer = styled.div`
   display: flex;
   align-items: center;
@@ -165,8 +221,11 @@ const IconsContainer = styled.div`
   width: 80%;
 `;
 
+
 const ForgotPassword = styled.h4`
   cursor: pointer;
 `;
 
-export default Login
+
+
+export default Login;

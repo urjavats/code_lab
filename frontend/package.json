@@ -30,7 +30,8 @@
     "react-split": "^2.0.14",
     "react-toastify": "^11.0.2",
     "react-tsparticles": "^2.12.2",
-    "styled-components": "^6.1.13",
+    "scrollreveal": "^4.0.9",
+    "styled-components": "^6.1.14",
     "tsparticles": "^3.7.1",
     "web-vitals": "^2.1.0"
   },
@@ -61,6 +62,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "typescript": "^5.7.2"
   }
 }

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export default function button({ content }) {
-  return <StyledButton>{content}</StyledButton>;
+export default function Button({ content, onClick }) {
+  return <StyledButton onClick={onClick}>{content}</StyledButton>;
 }
 
 const StyledButton = styled.button`
@@ -18,4 +18,3 @@ const StyledButton = styled.button`
   position: relative;
   z-index: 10; /* Ensure it is on top */
 `;
-
