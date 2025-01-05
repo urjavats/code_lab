@@ -5,6 +5,7 @@ import Input from './input.jsx';
 import Button from './button.jsx';
 import Icon from './Icon.jsx';
 import './Login.css';
+
 import { useNavigate } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
 
@@ -56,7 +57,7 @@ function Login() {
         setMessage('Login successful!');
         setError('');
         setTimeout(() => {
-          navigate('/editor');  
+          navigate('/home');  
         }, 2000);
         // Handle successful login logic, e.g., navigate to the dashboard
       } else {
