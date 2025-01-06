@@ -7,11 +7,11 @@ const { Server } = require('socket.io');
 const app = express();
 const port = 5000;
 const cors = require('cors');
-const server = http.createServer(app);
+const server = require("http").createServer(app);
 // Create Socket.IO instance
 const io = new Server(server, {
     cors: {
-      origin: "http://192.168.137.1:3000",
+      origin: ["http://localhost:3000", "http://192.168.137.1:3000"],
       methods: ["GET", "POST"],
       credentials: true,
       transports: ['websocket', 'polling']
@@ -25,15 +25,17 @@ const io = new Server(server, {
       console.log(`User ${socket.id} joined room ${data.roomId}`);
     });
   
-    socket.on('code_change', (data) => {
-      // Broadcast to all users in the room except sender
-      socket.to(data.roomId).emit('receive_code', data.code);
-    });
+    socket.on("code_change", (data) => {
+        const { roomId, code } = data;
+        console.log(`Code change in room ${roomId}:`, code);
+        socket.to(roomId).emit("receive_code", code);
+      });
   
-    socket.on('chat_message', (data) => {
-      // Broadcast chat messages to room
-      socket.to(data.roomId).emit('receive_message', data);
-    });
+      socket.on("chat_message", (data) => {
+        const { roomId, message } = data;
+        console.log(`Chat message in room ${roomId}:`, message);
+        socket.to(roomId).emit("receive_message", message);
+      });
   
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
@@ -61,9 +63,9 @@ app.use('/user',userRouter)
 app.use('/room',roomRouter)
 // Allow CORS so that backend and frontend could be put on different servers
 
-server.listen(port,()=>{
-    console.log(`Server Running on Port ${port}`);
-})
+server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 
 
 
