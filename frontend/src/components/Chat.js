@@ -1,23 +1,48 @@
 // Chat.js
 import React, { useState, useEffect } from 'react';
 import './Chat.css';
+import { io } from 'socket.io-client';
 
 function Chat({ roomId }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const userEmail = localStorage.getItem('userEmail');
 
+  useEffect(() => {
+    const newSocket = io('http://localhost:5000');
+    setSocket(newSocket);
+
+    // Join the specific room
+    newSocket.emit('join_room', { roomId });
+
+    // Listen for incoming messages
+    newSocket.on('receive_message', (message) => {
+      setMessages(prev => [...prev, message]);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [roomId]);
+  
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (newMessage.trim()) {
-      const message = {
+    if (newMessage.trim() && socket) {
+      const messageData = {
         id: Date.now(),
         text: newMessage,
-        sender: 'User', // Will be replaced with actual user data later
+        sender: userEmail, // Will be replaced with actual user data later
         timestamp: new Date().toLocaleTimeString(),
         roomId: roomId
       };
-      setMessages([...messages, message]);
+
+      // Emit message to server
+      socket.emit('send_message', messageData);
+      
+      // Update local state
+      setMessages([...messages, messageData]);
       setNewMessage('');
     }
   };
@@ -35,7 +60,7 @@ function Chat({ roomId }) {
         <>
           <div className="messages-container">
             {messages.map((message) => (
-              <div key={message.id} className="message">
+              <div key={message.id} className={`message ${message.sender === userEmail ? 'sent' : 'received'}`}>
                 <div className="message-header">
                   <span className="sender">{message.sender}</span>
                   <span className="timestamp">{message.timestamp}</span>

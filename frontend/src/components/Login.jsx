@@ -56,9 +56,10 @@ function Login() {
       if (response.ok && data.status === 'SUCCESS') {
         setMessage('Login successful!');
         setError('');
-        setTimeout(() => {
-          navigate('/home');  
-        }, 2000);
+        localStorage.setItem('userEmail', email);
+      setTimeout(() => {
+        navigate('/home');  
+      }, 2000);
         // Handle successful login logic, e.g., navigate to the dashboard
       } else {
         setError(data.message || 'Login failed.');

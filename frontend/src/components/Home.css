@@ -179,4 +179,37 @@ body {
       width: 80%;
     }
   }
+  .room-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 1rem 0;
+  }
+  
+  .room-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #3e3e3e;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .room-info {
+    flex-grow: 1;
+  }
+  
+  .join-button {
+    padding: 0.5rem 1rem;
+    background-color: #2cbb5d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .join-button:hover {
+    background-color: #2ed26c;
+  }
+  
   

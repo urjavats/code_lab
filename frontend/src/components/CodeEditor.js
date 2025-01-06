@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import './CodeEditor.css';
 import Split from 'react-split';
 import CodeMirror from '@uiw/react-codemirror';
 import { vscodeDark} from '@uiw/codemirror-theme-vscode';
 import { javascript } from '@codemirror/lang-javascript'
 import { jumpGame } from "../utils/problems/jump-game.ts";
-import { BsChevronUp } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,18 +13,68 @@ import { BiBot } from 'react-icons/bi';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Chat from './Chat';
 import { BsChat } from 'react-icons/bs';
+import { Problem } from '../utils/type/problem';
+import {problems} from '../utils/problems/index';
+import { io } from 'socket.io-client';
 
 
-function CodeEditor() {
-  const [code, setCode] = useState(jumpGame.starterCode);
+
+function CodeEditor(CodeEditorProps) {
+  const { roomId, problemId } = useParams();
+  const [code, setCode] = useState('');
   const [selectedTestCase, setSelectedTestCase] = useState(0);
-  const [problem, setProblem] = useState(null);
+  const [problem, setProblem] = useState(jumpGame);
   const editorRef = useRef(null);
   const [isChatLoading, setIsChatLoading] = useState(false);
 const [chatResponse, setChatResponse] = useState('');
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 
 const [isChatOpen, setIsChatOpen] = useState(false);
+const [socket, setSocket] = useState(null);
+
+useEffect(() => {
+  if (problemId && problems[problemId]) {
+    setProblem(problems[problemId]);
+    setCode(problems[problemId].starterCode);
+  } else {
+    // Fallback to jumpGame if no problemId is provided
+    setProblem(jumpGame);
+    setCode(jumpGame.starterCode);
+  }
+}, [problemId]);
+
+useEffect(() => {
+  const newSocket = io("http://localhost:5000", {
+    withCredentials: true,
+    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000
+  });
+
+  newSocket.on('connect_error', (error) => {
+    console.error('Socket connection error:', error);
+  });
+
+  newSocket.on('connect', () => {
+    console.log('Socket connected successfully');
+  });
+  setSocket(newSocket);
+
+  // Join room when component mounts
+  newSocket.emit('join_room', { roomId });
+
+  // Listen for code changes from other users
+  newSocket.on('receive_code', (newCode) => {
+    setCode(newCode);
+  });
+
+  // Cleanup on component unmount
+  return () => {
+    newSocket.disconnect();
+  };
+}, [roomId]);
+
+
 
 const handleChatbot = async () => {
   setIsChatLoading(true);
@@ -46,14 +96,24 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     setCode(newCode);
+    socket?.emit('code_change', {
+      roomId,
+      code: newCode
+    });
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
   };
+  const handleChatMessage = (message) => {
+    socket?.emit('chat_message', {
+      roomId,
+      message
+    });
+  };
   const handleSubmit = async () => {
     try {
       // Get the function name and user's code
-      const functionName = jumpGame.starterFunctionName;
+      const functionName = problem.starterFunctionName;
       const userCode = code.trim();
       
       // Create and execute the function
@@ -63,7 +123,7 @@ const handleChatbot = async () => {
       `)();
       
       // Run all test cases using the handler
-      const success = jumpGame.handlerFunction(fn);
+      const success = problem.handlerFunction(fn);
       
       if (success) {
         toast.success("Congratulations! All test cases passed!", {
@@ -92,7 +152,7 @@ const handleChatbot = async () => {
   const handleRun = () => {
     try {
       // Get current test case
-      const testCase = jumpGame.examples[selectedTestCase];
+      const testCase = problem.examples[selectedTestCase];
       
       // Extract the function name and user's code
       const userCode = code.trim();
@@ -159,15 +219,15 @@ const handleChatbot = async () => {
         {/* Left column: Problem statement */}
         <div className="problem-statement">
           <div className='problem-tile-container'>
-            {jumpGame.title}
+            {problem.title}
 
           </div>
           <div className='.problem-description'>
-          <div dangerouslySetInnerHTML={{ __html: jumpGame.problemStatement }} />
+          <div dangerouslySetInnerHTML={{ __html: problem?.problemStatement }} />
           </div>
           <div className='examples-area'>
             <div className='example-boxes'>
-            {jumpGame.examples.map((example, index) => (
+            {problem.examples.map((example, index) => (
             <div key={index} className="example-box">
               <p className="example-heading">Example {index + 1}:</p>
               <div className="example-content">
@@ -185,7 +245,7 @@ const handleChatbot = async () => {
           <div className="constraints-area">
         <p className="constraints-heading">Constraints:</p>
         <ul className="constraints-list">
-          <div dangerouslySetInnerHTML={{ __html: jumpGame.constraints }} />
+          <div dangerouslySetInnerHTML={{ __html: problem.constraints }} />
         </ul>
       </div>
         </div>
@@ -222,7 +282,7 @@ const handleChatbot = async () => {
           <div className="test-cases">
             <h3>Test Cases</h3>
             <div className='test-case-boxes'>
-            {jumpGame.examples.map((example, index) => (
+            {problem.examples.map((example, index) => (
           <div 
             key={index}
             className={`test-case-box ${selectedTestCase === index ? 'selected' : ''}`}
@@ -238,7 +298,7 @@ const handleChatbot = async () => {
                   Input:
               </div>
               <div className='input-content'>
-              {jumpGame.examples[selectedTestCase].inputText}
+              {problem.examples[selectedTestCase].inputText}
               </div>
             </div>
             <div className='input'>
@@ -246,7 +306,7 @@ const handleChatbot = async () => {
                   Output:
               </div>
               <div className='input-content'>
-              {jumpGame.examples[selectedTestCase].outputText}
+              {problem.examples[selectedTestCase].outputText}
               </div>
             </div>
           </div>

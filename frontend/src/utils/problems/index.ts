@@ -13,6 +13,6 @@ export const problems: ProblemMap = {
 	"two-sum": twoSum,
 	"reverse-linked-list": reverseLinkedList,
 	"jump-game": jumpGame,
-	"search-a-2d-matrix": search2DMatrix,
+	 "search-a-2d-matrix": search2DMatrix,
 	"valid-parentheses": validParentheses,
 };

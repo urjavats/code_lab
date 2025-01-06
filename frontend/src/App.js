@@ -14,7 +14,7 @@ function App() {
 
         <Route path="/" element={<Login/>}/>
         <Route path="/register" element={<Register />} />
-        <Route path="/editor" element={<CodeEditor />} />
+        <Route path="/editor/:roomId/:problemId" element={<CodeEditor />} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </Router>
