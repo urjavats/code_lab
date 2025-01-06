@@ -44,7 +44,7 @@ useEffect(() => {
 }, [problemId]);
 
 useEffect(() => {
-  const newSocket = io("http://localhost:5000", {
+  const newSocket = io("http:localhost:5000", {
     withCredentials: true,
     transports: ['polling', 'websocket'],
     reconnectionAttempts: 5,
