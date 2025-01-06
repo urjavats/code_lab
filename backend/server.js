@@ -5,14 +5,13 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const app = express();
-// Use the PORT provided by Heroku or default to 5000 locally
-const PORT = process.env.PORT || 5000;
+
 const cors = require('cors');
 const server = require("http").createServer(app);
 // Create Socket.IO instance
 const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:3000"],
+      origin: "http://localhost:3000",
       methods: ["GET", "POST"],
       credentials: true,
       transports: ['websocket', 'polling']
@@ -60,10 +59,14 @@ app.use(cors());
 
 const userRouter=require('./api/User');
 const roomRouter=require('./api/Room');
-app.use('/user',userRouter)
-app.use('/room',roomRouter)
-// Allow CORS so that backend and frontend could be put on different servers
+app.use('/user',userRouter);
+app.use('/room',roomRouter);
 
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+// Allow CORS so that backend and frontend could be put on different servers
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
