@@ -11,7 +11,7 @@ function Chat({ roomId }) {
   const userEmail = localStorage.getItem('userEmail');
 
   useEffect(() => {
-    const newSocket = io('http:localhost:5000');
+    const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
 
     // Join the specific room
