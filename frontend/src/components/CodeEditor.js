@@ -44,7 +44,7 @@ useEffect(() => {
 }, [problemId]);
 
 useEffect(() => {
-  const newSocket = io("http://localhost:5000", {
+  const newSocket = io("http://192.168.137.1:5000", {
     withCredentials: true,
     transports: ['polling', 'websocket'],
     reconnectionAttempts: 5,
@@ -57,14 +57,19 @@ useEffect(() => {
       newSocket.emit('join_room', { roomId });
     }
   });
-
+  newSocket.on('receive_code', (newCode) => {
+    console.log('Received code update');
+    setCode(newCode);
+  });
+  
+  newSocket.on('receive_message', (message) => {
+    console.log('Received chat message');
+    // Handle incoming chat messages
+  });
   newSocket.on('connect_error', (error) => {
     console.error('Connection error:', error);
   });
 
-  newSocket.on('receive_code', (newCode) => {
-    setCode(newCode);
-  });
 
   setSocket(newSocket);
 
@@ -95,10 +100,12 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     setCode(newCode);
-    socket.emit('code_change', {
-      roomId,
-      code: newCode
-    });
+    if (socket && socket.connected && roomId) {
+      socket.emit('code_change', {
+        roomId,
+        code: newCode
+      });
+    }
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
@@ -334,7 +341,7 @@ const handleChatbot = async () => {
  <button className='chat-button' onClick={() => setIsChatOpen(!isChatOpen)}>
     <BsChat size={20} />
   </button>
-  {isChatOpen && <Chat roomId="room-1" />}
+  {isChatOpen && <Chat roomId={roomId} />}
                 <button className='run-button' onClick={handleRun}>
                   Run
                 </button>

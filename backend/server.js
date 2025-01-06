@@ -11,7 +11,7 @@ const server = http.createServer(app);
 // Create Socket.IO instance
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "http://192.168.137.1:3000",
       methods: ["GET", "POST"],
       credentials: true,
       transports: ['websocket', 'polling']
@@ -38,6 +38,16 @@ const io = new Server(server, {
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
     });
+
+    socket.on('code_change', (data) => {
+        console.log(`Broadcasting code change to room ${data.roomId}`);
+        socket.to(data.roomId).emit('receive_code', data.code);
+      });
+      
+      socket.on('chat_message', (data) => {
+        console.log(`Broadcasting chat message to room ${data.roomId}`);
+        socket.to(data.roomId).emit('receive_message', data);
+      });
   });
 //for accepting post form data
 const bodyParser=require('express').json;
@@ -54,4 +64,6 @@ app.use('/room',roomRouter)
 server.listen(port,()=>{
     console.log(`Server Running on Port ${port}`);
 })
+
+
 
