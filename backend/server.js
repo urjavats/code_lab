@@ -26,7 +26,13 @@ const io = new Server(server, {
     });
   
     socket.on('code_change', (data) => {
+      // Broadcast to all users in the room except sender
       socket.to(data.roomId).emit('receive_code', data.code);
+    });
+  
+    socket.on('chat_message', (data) => {
+      // Broadcast chat messages to room
+      socket.to(data.roomId).emit('receive_message', data);
     });
   
     socket.on('disconnect', () => {

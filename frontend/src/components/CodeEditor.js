@@ -46,29 +46,28 @@ useEffect(() => {
 useEffect(() => {
   const newSocket = io("http://localhost:5000", {
     withCredentials: true,
-    transports: ['websocket', 'polling'],
+    transports: ['polling', 'websocket'],
     reconnectionAttempts: 5,
     reconnectionDelay: 1000
   });
 
-  newSocket.on('connect_error', (error) => {
-    console.error('Socket connection error:', error);
-  });
-
   newSocket.on('connect', () => {
-    console.log('Socket connected successfully');
+    console.log('Connected to server');
+    if (roomId) {
+      newSocket.emit('join_room', { roomId });
+    }
   });
-  setSocket(newSocket);
 
-  // Join room when component mounts
-  newSocket.emit('join_room', { roomId });
+  newSocket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+  });
 
-  // Listen for code changes from other users
   newSocket.on('receive_code', (newCode) => {
     setCode(newCode);
   });
 
-  // Cleanup on component unmount
+  setSocket(newSocket);
+
   return () => {
     newSocket.disconnect();
   };
@@ -96,7 +95,7 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     setCode(newCode);
-    socket?.emit('code_change', {
+    socket.emit('code_change', {
       roomId,
       code: newCode
     });
@@ -105,7 +104,7 @@ const handleChatbot = async () => {
     setSelectedTestCase(index);
   };
   const handleChatMessage = (message) => {
-    socket?.emit('chat_message', {
+    socket.emit('chat_message', {
       roomId,
       message
     });
