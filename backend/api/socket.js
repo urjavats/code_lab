@@ -1,5 +1,7 @@
 //mongoDb
-require('./config/db')
+require('dotenv').config({ path: '../.env' }); 
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+require('../config/db')
 
 const express = require('express');
 const http = require('http');
@@ -82,8 +84,8 @@ app.use((req, res, next) => {
 
 
 
-const userRouter=require('/User');
-const roomRouter=require('/Room');
+const userRouter=require('./User');
+const roomRouter=require('./Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 
