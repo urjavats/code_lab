@@ -11,7 +11,7 @@ const server = require("http").createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000", 
-  "https://code-lab-pu8s.vercel.app/"
+  "https://code-lab-pu8s-57wp7qmqf-utkarshs-projects-a365c3b2.vercel.app"
 ];
 // Create Socket.IO instance
 const io = new Server(server, {
@@ -60,17 +60,20 @@ const io = new Server(server, {
 const bodyParser=require('express').json;
 app.use(bodyParser());
 app.use(express.json());
+app.options('*', cors());
 app.use(cors({
   origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin) || !origin) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error(`Blocked by CORS: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
+
 
 
 const userRouter=require('./api/User');
