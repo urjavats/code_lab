@@ -43,7 +43,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch(`$API_BASE_URL/user/signin`, {
+      const response = await fetch(`${API_BASE_URL}/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
