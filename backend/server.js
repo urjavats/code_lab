@@ -17,6 +17,14 @@ const pusher = new Pusher({
   useTLS: true
 });
 
+pusher.channel('room_' + roomId)
+  .bind('client-code_change', (data) => {
+    // Broadcast the code_change event to all clients
+    pusher.trigger('room_' + roomId, 'code_change', {
+      code: data.code
+    });
+  });
+
 const allowedOrigins = [
   "http://localhost:3000", 
   "https://code-lab-pu8s.vercel.app"
