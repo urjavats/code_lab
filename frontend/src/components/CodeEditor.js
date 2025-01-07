@@ -17,7 +17,7 @@ import { Problem } from '../utils/type/problem';
 import {problems} from '../utils/problems/index';
 import { io } from 'socket.io-client';
 import Pusher from 'pusher-js';
-const [pusherChannel, setPusherChannel] = useState(null);
+
 
 
 
@@ -30,6 +30,7 @@ function CodeEditor(CodeEditorProps) {
   const [isChatLoading, setIsChatLoading] = useState(false);
 const [chatResponse, setChatResponse] = useState('');
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
+const [pusherChannel, setPusherChannel] = useState(null);
 
 const [isChatOpen, setIsChatOpen] = useState(false);
 const [socket, setSocket] = useState(null);
