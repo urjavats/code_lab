@@ -37,15 +37,15 @@ function Chat({ roomId }) {
         timestamp: new Date().toLocaleTimeString(),
         roomId,
       };
+
       try {
-        // Send the message to your server
         await fetch(`${API_BASE_URL}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messageData),
         });
 
-        setNewMessage('');
+        setNewMessage(''); // Clear the input box
       } catch (error) {
         console.error('Error:', error);
       }
