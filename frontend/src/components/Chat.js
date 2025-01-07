@@ -22,7 +22,7 @@ function Chat({ roomId }) {
     pusher.connection.bind('connected', () => {
       const socketId = pusher.connection.socket_id;  // Get the socket ID
       const channelName = roomId;  // This is the channel to subscribe to
-
+      console.log("Sending auth data:", { socket_id: socketId, channel_name: channelName });
       // Make an authentication request to your backend with socket_id and channel_name
       fetch('https://code-lab-five.vercel.app/pusher/auth', {
         method: 'POST',

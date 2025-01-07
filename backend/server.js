@@ -96,6 +96,7 @@ const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 app.post('/pusher/auth', (req, res) => {
+  console.log("Received data:", req.body);
   const { socket_id, channel_name } = req.body;
   if (!socket_id || !channel_name) {
     return res.status(400).json({ error: 'Missing socket_id or channel_name' });
