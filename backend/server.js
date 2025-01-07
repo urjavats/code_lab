@@ -11,7 +11,7 @@ const server = require("http").createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000", 
-  "https://code-lab-pu8s.vercel.app/"
+  "https://code-lab-pu8s.vercel.app"
 ];
 
 // Create Socket.IO instance
