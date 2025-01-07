@@ -96,9 +96,12 @@ const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 app.post('/pusher/auth', (req, res) => {
-  const socketId = req.body.socket_id;
-  const channel = req.body.channel_name;
-  const auth = pusher.authenticateUser(socketId, channel);
+  const { socket_id, channel_name } = req.body;
+  if (!socket_id || !channel_name) {
+    return res.status(400).json({ error: 'Missing socket_id or channel_name' });
+  }
+
+  const auth = pusher.authenticate(socket_id, channel_name);
   res.send(auth);
 });
 app.post('/code_change', (req, res) => {
