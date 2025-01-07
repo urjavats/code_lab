@@ -13,6 +13,12 @@ const allowedOrigins = [
   "http://localhost:3000", 
   "https://code-lab-pu8s-57wp7qmqf-utkarshs-projects-a365c3b2.vercel.app"
 ];
+
+const corsOptions = {
+  origin: 'https://code-lab-pu8s-cea95ox1e-utkarshs-projects-a365c3b2.vercel.app', // Replace with your frontend URL
+  methods: 'GET,POST,OPTIONS',
+  allowedHeaders: 'Content-Type,Authorization',
+};
 // Create Socket.IO instance
 const io = new Server(server, {
     cors: {
@@ -73,6 +79,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
+app.use(cors(corsOptions));
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin); // Logs the request origin
   console.log("Path:", req.path); // Logs the requested path
