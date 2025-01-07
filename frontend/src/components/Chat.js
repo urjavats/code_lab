@@ -19,14 +19,37 @@ function Chat({ roomId }) {
       encrypted: true,
       authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
     });
-    const channel = pusher.subscribe(roomId);
-    channel.bind('chat_message', function(data) {
-      console.log("Received message via Pusher:", data);
-      setMessages(prev => [...prev, data.message]);
+    pusher.connection.bind('connected', () => {
+      const socketId = pusher.connection.socket_id;  // Get the socket ID
+      const channelName = roomId;  // This is the channel to subscribe to
+
+      // Make an authentication request to your backend with socket_id and channel_name
+      fetch('https://code-lab-five.vercel.app/pusher/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          socket_id: socketId,
+          channel_name: channelName,
+        }),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        // After successful authentication, subscribe to the channel
+        const channel = pusher.subscribe(channelName);
+        channel.bind('chat_message', function(data) {
+          console.log("Received message via Pusher:", data);
+          setMessages((prev) => [...prev, data.message]);
+        });
+      })
+      .catch((error) => {
+        console.error('Error during Pusher auth', error);
+      });
     });
+
     return () => {
-      channel.unbind_all();
-      pusher.unsubscribe(roomId);
+      pusher.disconnect(); // Ensure cleanup of Pusher connection
     };
   }, [roomId]);
   
