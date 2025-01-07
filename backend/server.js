@@ -61,7 +61,6 @@ const io = new Server(server, {
 const bodyParser=require('express').json;
 app.use(bodyParser());
 app.use(express.json());
-app.options('*', cors());
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
