@@ -45,7 +45,7 @@ function Chat({ roomId }) {
           body: JSON.stringify(messageData),
         });
 
-        setNewMessage(''); // Clear the input box
+        // setNewMessage(''); // Clear the input box
       } catch (error) {
         console.error('Error:', error);
       }
