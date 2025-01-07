@@ -128,6 +128,20 @@ app.post('/messages', (req, res) => {
     res.status(500).send('Error sending message via Pusher.');
   });
 });
+app.post('/broadcast-message', (req, res) => {
+  const { text, sender, timestamp, roomId } = req.body;
+
+  // Broadcast the message to the specified room using Pusher
+  pusher.trigger(roomId, 'chat_message', {
+    message: {
+      text,
+      sender,
+      timestamp,
+    },
+  });
+
+  res.status(200).send({ message: 'Message broadcasted successfully' });
+});
 
 app.get('/', (req, res) => {
   res.send('Server is running!');
