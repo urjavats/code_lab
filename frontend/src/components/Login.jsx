@@ -30,7 +30,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch('https://code-lab-five.vercel.app/user/signin', {
+      const response = await fetch(`$API_BASE_URL/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
