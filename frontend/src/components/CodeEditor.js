@@ -31,6 +31,7 @@ const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 
 const [isChatOpen, setIsChatOpen] = useState(false);
 const [socket, setSocket] = useState(null);
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 useEffect(() => {
   if (problemId && problems[problemId]) {
@@ -44,7 +45,7 @@ useEffect(() => {
 }, [problemId]);
 
 useEffect(() => {
-  const newSocket = io(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}`, {
+  const newSocket = io(`${API_BASE_URL}`, {
     withCredentials: true,
     transports: ['polling', 'websocket'],
     reconnectionAttempts: 5,

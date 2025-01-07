@@ -73,6 +73,11 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
+app.use((req, res, next) => {
+  console.log("Origin:", req.headers.origin); // Logs the request origin
+  console.log("Path:", req.path); // Logs the requested path
+  next();
+});
 
 
 

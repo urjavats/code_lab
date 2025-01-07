@@ -9,9 +9,10 @@ function Chat({ roomId }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [socket, setSocket] = useState(null);
   const userEmail = localStorage.getItem('userEmail');
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
-    const newSocket = io(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}`);
+    const newSocket = io(`${API_BASE_URL}`);
     setSocket(newSocket);
 
     // Join the specific room

@@ -8,10 +8,11 @@ function Home() {
   const [selectedProblem, setSelectedProblem] = useState('');
   const [createRoomVisible, setCreateRoomVisible] = useState(false);
   const [availableRooms, setAvailableRooms] = useState([]);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
   const fetchRooms = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/room/`);
+      const response = await fetch(`${API_BASE_URL}/room`);
       const data = await response.json();
       setAvailableRooms(data.rooms);
     } catch (error) {
@@ -33,7 +34,7 @@ function Home() {
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/create`, {
+      const response = await fetch(`${API_BASE_URL}/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
