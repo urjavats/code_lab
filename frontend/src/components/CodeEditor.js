@@ -16,6 +16,8 @@ import { BsChat } from 'react-icons/bs';
 import { Problem } from '../utils/type/problem';
 import {problems} from '../utils/problems/index';
 import { io } from 'socket.io-client';
+import Pusher from 'pusher-js';
+const [pusherChannel, setPusherChannel] = useState(null);
 
 
 
@@ -44,41 +46,32 @@ useEffect(() => {
   }
 }, [problemId]);
 
+
 useEffect(() => {
-  const newSocket = io(`${API_BASE_URL}`, {
-    withCredentials: true,
-    transports: ['polling', 'websocket'],
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000
+  const pusher = new Pusher(process.env.REACT_APP_PUSHER_APP_KEY, {
+    cluster: 'us2',
   });
 
-  newSocket.on('connect', () => {
-    console.log('Connected to server');
-    if (roomId) {
-      newSocket.emit('join_room', { roomId });
-    }
-  });
-  newSocket.on('receive_code', (newCode) => {
-    console.log('Received code update');
-    setCode(newCode);
-  });
+  const channel = pusher.subscribe(`room_${roomId}`);
   
-  newSocket.on('receive_message', (message) => {
+  channel.bind('code_change', (data) => {
+    console.log('Received code update from Pusher');
+    setCode(data.code);
+  });
+
+  channel.bind('chat_message', (data) => {
     console.log('Received chat message');
     // Handle incoming chat messages
   });
-  newSocket.on('connect_error', (error) => {
-    console.error('Connection error:', error);
-  });
 
-
-  setSocket(newSocket);
+  setPusherChannel(channel);
 
   return () => {
-    newSocket.disconnect();
+    if (channel) {
+      channel.unsubscribe();
+    }
   };
 }, [roomId]);
-
 
 
 const handleChatbot = async () => {
@@ -101,8 +94,8 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     setCode(newCode);
-    if (socket && socket.connected && roomId) {
-      socket.emit('code_change', {
+    if (pusherChannel) {
+      pusherChannel.trigger('client-code_change', {
         roomId,
         code: newCode
       });
@@ -112,10 +105,12 @@ const handleChatbot = async () => {
     setSelectedTestCase(index);
   };
   const handleChatMessage = (message) => {
-    socket.emit('chat_message', {
-      roomId,
-      message
-    });
+    if (pusherChannel) {
+      pusherChannel.trigger('client-chat_message', {
+        roomId,
+        message
+      });
+    }
   };
   const handleSubmit = async () => {
     try {

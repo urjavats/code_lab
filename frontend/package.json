@@ -22,6 +22,7 @@
     "leetcode-cli": "^2.6.2",
     "openai": "^4.77.3",
     "puppeteer": "^23.11.1",
+    "pusher-js": "^8.4.0-rc2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",

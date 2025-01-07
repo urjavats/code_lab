@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './Chat.css';
 import { io } from 'socket.io-client';
+import Pusher from 'pusher-js';
 
 function Chat({ roomId }) {
   const [messages, setMessages] = useState([]);
@@ -23,8 +24,17 @@ function Chat({ roomId }) {
       setMessages(prev => [...prev, message]);
     });
 
+    const pusher = new Pusher('your-pusher-key', {
+      cluster: 'us3',
+      forceTLS: true
+    });
+    const channel = pusher.subscribe(roomId);
+    channel.bind('chat_message', function(data) {
+      setMessages(prev => [...prev, data.message]);
+    });
     return () => {
       newSocket.disconnect();
+      pusher.unsubscribe(roomId);
     };
   }, [roomId]);
   

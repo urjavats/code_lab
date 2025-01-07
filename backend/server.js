@@ -1,7 +1,6 @@
 //mongoDb
-require('dotenv').config({ path: '../.env' }); 
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
-require('../config/db')
+
+require('./config/db')
 
 const express = require('express');
 const http = require('http');
@@ -9,6 +8,14 @@ const { Server } = require('socket.io');
 const app = express();
 // const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 const cors = require('cors');
+const Pusher = require('pusher');
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID,  // from your Pusher dashboard
+  key: process.env.PUSHER_KEY,      // from your Pusher dashboard
+  secret: process.env.PUSHER_SECRET,  // from your Pusher dashboard
+  cluster: 'us3',          // Pusher cluster (e.g., 'us2')
+  useTLS: true
+});
 
 const allowedOrigins = [
   "http://localhost:3000", 
@@ -37,12 +44,14 @@ const io = new Server(httpServer, {
     socket.on("code_change", (data) => {
         const { roomId, code } = data;
         console.log(`Code change in room ${roomId}:`, code);
+        pusher.trigger(roomId, 'code_change', { code });
         socket.to(roomId).emit("receive_code", code);
       });
   
       socket.on("chat_message", (data) => {
         const { roomId, message } = data;
         console.log(`Chat message in room ${roomId}:`, message);
+        pusher.trigger(roomId, 'chat_message', { message });
         socket.to(roomId).emit("receive_message", message);
       });
   
@@ -84,8 +93,8 @@ app.use((req, res, next) => {
 
 
 
-const userRouter=require('./User');
-const roomRouter=require('./Room');
+const userRouter=require('./api/User');
+const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 
