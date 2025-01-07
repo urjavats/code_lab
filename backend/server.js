@@ -95,6 +95,12 @@ const userRouter=require('./api/User');
 const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
+app.post('/pusher/auth', (req, res) => {
+  const socketId = req.body.socket_id;
+  const channel = req.body.channel_name;
+  const auth = pusher.authenticateUser(socketId, channel);
+  res.send(auth);
+});
 app.post('/code_change', (req, res) => {
   const { roomId, code } = req.body;
   console.log(`Code change in room ${roomId}:`, code);

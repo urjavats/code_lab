@@ -50,9 +50,12 @@ useEffect(() => {
 useEffect(() => {
   const pusher = new Pusher(process.env.REACT_APP_PUSHER_APP_KEY, {
     cluster: 'us3',
+    encrypted: true,
+    authEndpoint: '/pusher/auth',
   });
 
-  const channel = pusher.subscribe(`room_${roomId}`);
+  const channel = pusher.subscribe(`presence-room_${roomId}`);
+
   
   channel.bind('code_change', (data) => {
     console.log('Received code update from Pusher');
@@ -94,12 +97,8 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     setCode(newCode);
-    if (pusherChannel) {
-      pusherChannel.trigger('client-code_change', {
-        roomId,
-        code: newCode
-      });
-    }
+    // Broadcast the code change via Pusher
+    pusherChannel.trigger('client-code_change', { roomId, code: newCode });
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
