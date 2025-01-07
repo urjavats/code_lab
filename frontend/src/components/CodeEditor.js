@@ -51,7 +51,7 @@ useEffect(() => {
   const pusher = new Pusher(process.env.REACT_APP_PUSHER_APP_KEY, {
     cluster: 'us3',
     encrypted: true,
-    authEndpoint: '/pusher/auth',
+    authEndpoint: `${API_BASE_URL}/pusher/auth`,
   });
 
   const channel = pusher.subscribe(`presence-room_${roomId}`);

@@ -11,12 +11,13 @@ function Chat({ roomId }) {
   const [socket, setSocket] = useState(null);
   const userEmail = localStorage.getItem('userEmail');
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
-
+  
   useEffect(() => {
     // Initialize Pusher
     const pusher = new Pusher('your-pusher-key', {
       cluster: 'us3',
       encrypted: true,
+      authEndpoint: 'https://code-lab-five.vercel.app//pusher/auth',
     });
     const channel = pusher.subscribe(roomId);
     channel.bind('chat_message', function(data) {
@@ -53,7 +54,9 @@ function Chat({ roomId }) {
     }
   };
 
-
+  useEffect(() => {
+    console.log("Updated messages:", messages);
+  }, [messages]);
 
   return (
     <div className={`chat-container ${isExpanded ? 'expanded' : ''}`}>
