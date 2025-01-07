@@ -20,7 +20,7 @@ const allowedOrigins = [
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
     cors: {
-      origin: allowedOrigins,
+      origin: ["http://localhost:3000", "https://code-lab-pu8s.vercel.app"],
       methods: ["GET", "POST"],
       credentials: true,
       transports: ['websocket', 'polling']
