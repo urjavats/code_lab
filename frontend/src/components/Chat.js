@@ -32,31 +32,26 @@ function Chat({ roomId }) {
     e.preventDefault();
     if (newMessage.trim()) {
       const messageData = {
-        id: Date.now(),
         text: newMessage,
         sender: userEmail,
         timestamp: new Date().toLocaleTimeString(),
         roomId,
       };
       try {
-        // Send message to your backend API
-        const response = await fetch(`${API_BASE_URL}/messages`, {
+        // Send the message to your server
+        await fetch(`${API_BASE_URL}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messageData),
         });
 
-        if (response.ok) {
-          setMessages([...messages, messageData]); // Optimistic update
-          setNewMessage('');
-        } else {
-          console.error('Failed to send message');
-        }
+        setNewMessage('');
       } catch (error) {
         console.error('Error:', error);
       }
     }
   };
+
 
 
   return (

@@ -110,13 +110,15 @@ app.post('/code_change', (req, res) => {
   res.status(200).send('Code change broadcasted.');
 });
 
-app.post('/chat_message', (req, res) => {
-  const { roomId, message } = req.body;
-  console.log(`Chat message in room ${roomId}:`, message);
+app.post('/messages', (req, res) => {
+  const { text, sender, timestamp, roomId } = req.body;
 
-  // Trigger Pusher event
-  pusher.trigger(`room_${roomId}`, 'chat_message', { message });
-  res.status(200).send('Chat message broadcasted.');
+  // Broadcast the message via Pusher
+  pusher.trigger(roomId, 'chat_message', {
+    message: { text, sender, timestamp },
+  });
+
+  res.status(200).send('Message sent via Pusher.');
 });
 app.get('/', (req, res) => {
   res.send('Server is running!');
