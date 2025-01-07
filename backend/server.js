@@ -102,7 +102,7 @@ app.post('/pusher/auth', (req, res) => {
     return res.status(400).json({ error: 'Missing socket_id or channel_name' });
   }
 
-  const auth = pusher.authenticateUser(socket_id, channel_name);
+  const auth = pusher.authorizeChannel(socket_id, channel_name);
   res.send(auth);
 });
 app.post('/code_change', (req, res) => {
