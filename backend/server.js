@@ -17,13 +17,6 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-pusher.channel('room_' + roomId)
-  .bind('client-code_change', (data) => {
-    // Broadcast the code_change event to all clients
-    pusher.trigger('room_' + roomId, 'code_change', {
-      code: data.code
-    });
-  });
 
 const allowedOrigins = [
   "http://localhost:3000", 
@@ -52,7 +45,7 @@ const io = new Server(httpServer, {
     socket.on("code_change", (data) => {
         const { roomId, code } = data;
         console.log(`Code change in room ${roomId}:`, code);
-        pusher.trigger(roomId, 'code_change', { code });
+        pusher.trigger('room_' + roomId, 'code_change', { code });
         socket.to(roomId).emit("receive_code", code);
       });
   
