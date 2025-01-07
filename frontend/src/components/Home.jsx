@@ -11,7 +11,7 @@ function Home() {
 
   const fetchRooms = async () => {
     try {
-      const response = await fetch('http://localhost:5000/room/');
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/room/`);
       const data = await response.json();
       setAvailableRooms(data.rooms);
     } catch (error) {
@@ -33,7 +33,7 @@ function Home() {
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/room/create', {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
