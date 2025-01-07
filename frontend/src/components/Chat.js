@@ -64,13 +64,30 @@ function Chat({ roomId }) {
       };
 
       try {
-        await fetch(`${API_BASE_URL}/messages`, {
+        // Send message data to backend API to store it
+        const response = await fetch(`${API_BASE_URL}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messageData),
         });
-
-        setNewMessage(''); // Clear the input box
+  
+        // If message is successfully saved, trigger Pusher event
+        if (response.ok) {
+          // Trigger Pusher event to broadcast the message
+          const broadcastResponse = await fetch(`${API_BASE_URL}/broadcast-message`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(messageData),
+          });
+  
+          if (broadcastResponse.ok) {
+            setNewMessage(''); // Clear the input box
+          } else {
+            console.error('Error broadcasting message');
+          }
+        } else {
+          console.error('Error saving message');
+        }
       } catch (error) {
         console.error('Error:', error);
       }
@@ -94,7 +111,8 @@ function Chat({ roomId }) {
         <>
           <div className="messages-container">
             {messages.map((message) => (
-              <div key={message.id} className={`message ${message.sender === userEmail ? 'sent' : 'received'}`}>
+              <div key={message.id || message.timestamp
+              } className={`message ${message.sender === userEmail ? 'sent' : 'received'}`}>
                 <div className="message-header">
                   <span className="sender">{message.sender}</span>
                   <span className="timestamp">{message.timestamp}</span>
