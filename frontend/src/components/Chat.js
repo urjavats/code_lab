@@ -17,7 +17,7 @@ function Chat({ roomId }) {
     const pusher = new Pusher('your-pusher-key', {
       cluster: 'us3',
       encrypted: true,
-      authEndpoint: 'https://code-lab-five.vercel.app//pusher/auth',
+      authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
     });
     const channel = pusher.subscribe(roomId);
     channel.bind('chat_message', function(data) {
