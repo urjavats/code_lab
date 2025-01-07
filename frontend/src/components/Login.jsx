@@ -103,20 +103,11 @@ function Login() {
       <ButtonContainer>
         <Button content="Sign In" onClick={handleSubmit} />
       </ButtonContainer>
-      <LoginWith>Don't have an account? <a href="/register">Sign up</a></LoginWith>
       <HorizontalRule />
-      <IconsContainer>
-        <Icon color={FacebookBackground} onClick={() => handleIconClick('Facebook')}>
-          <FaFacebookF />
-        </Icon>
-        <Icon color={InstagramBackground} onClick={() => handleIconClick('Instagram')}>
-          <FaInstagram />
-        </Icon>
-        <Icon color={TwitterBackground} onClick={() => handleIconClick('Twitter')}>
-          <FaTwitter />
-        </Icon>
-      </IconsContainer>
-      <ForgotPassword>Forgot Password?</ForgotPassword>
+      <LoginWith > <StyledAnchor href="/register">Sign up</StyledAnchor></LoginWith>
+      
+      
+      
       {message && <Message>{message}</Message>}
     </MainContainer>
   );
@@ -131,10 +122,12 @@ const Message = styled.p`
 // Existing styled-components here...
 const MainContainer = styled.div`
   display: flex;
-  align-items: center;
-  flex-direction: column;
+  flex-direction: column;   /* Stack items vertically */
+  justify-content: flex-start; /* Align items from top */
+  align-items: center;      /* Center horizontally */
   height: 80vh;
-  width: 30vw;
+  width: 90%;
+  max-width: 400px;
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(8.5px);
@@ -143,28 +136,19 @@ const MainContainer = styled.div`
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 0.4rem;
+
   @media only screen and (max-width: 320px) {
     width: 80vw;
     height: 90vh;
-    hr {
-      margin-bottom: 0.3rem;
-    }
-    h4 {
-      font-size: small;
-    }
   }
   @media only screen and (min-width: 360px) {
     width: 80vw;
     height: 90vh;
-    h4 {
-      font-size: small;
-    }
   }
   @media only screen and (min-width: 411px) {
     width: 80vw;
     height: 90vh;
   }
-
   @media only screen and (min-width: 768px) {
     width: 80vw;
     height: 80vh;
@@ -178,7 +162,6 @@ const MainContainer = styled.div`
     height: 80vh;
   }
 `;
-
 const WelcomeText = styled.h2`
   margin: 3rem 0 2rem 0;
 `;
@@ -186,14 +169,17 @@ const WelcomeText = styled.h2`
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  height: 20%;
-  width: 100%;
+  align-items: center;      
+  gap: 0.5rem;                /* Consistent gap between inputs */
+  width: 100%;              /* Full width of the parent container */
+  padding: 0.5rem;            /* Add padding around the container */
+  box-sizing: border-box;   /* Ensure padding is included in the width/height calculations */
+  flex-grow: 0.5;             /* Allow input container to grow and take available space */
 `;
 
+
 const ButtonContainer = styled.div`
-  margin: 1rem 0 2rem 0;
+  margin: 0.5rem 0 0.5rem 0;     /* Ensure enough margin around the button */
   width: 100%;
   display: flex;
   align-items: center;
@@ -204,22 +190,31 @@ const LoginWith = styled.h5`
   cursor: pointer;
 `;
 
+const StyledAnchor = styled.a`
+  color: black;
+  font-weight: bolder;
+  font-family: "Raleway", sans-serif;
+  cursor: pointer; /* Add any additional styles you want */
+`;
+
 const HorizontalRule = styled.hr`
-  width: 90%;
+  width: 90%; /* Ensure the rule doesn't overflow */
   height: 0.3rem;
   border-radius: 0.8rem;
   border: none;
   background: linear-gradient(to right, #14163c 0%, #03217b 79%);
-  background-color: #ebd0d0;
   margin: 1.5rem 0 1rem 0;
   backdrop-filter: blur(25px);
+  max-width: 100%; /* Ensure it respects the container width */
 `;
 
 const IconsContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
   margin: 2rem 0 3rem 0;
-  width: 80%;
+  width: 80%; /* Ensure the container respects the available width */
+  max-width: 100%; /* Prevent it from overflowing the parent container */
+  box-sizing: border-box; /* Include padding/margins in width calculation */
 `;
 
 

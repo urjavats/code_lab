@@ -16,17 +16,21 @@
   width: 100vw;
 }*/
 body.login-active {
-    background-image: url('./back.jpg');
-    background-size: cover;
-    font-family: "Raleway", sans-serif;
-     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-  }
-  a{
-    color: black;
-    font-weight: bolder;
-    font-family: "Raleway", sans-serif;
-  }
+  background-image: url('./back.jpg');
+  background-size: cover;
+  background-position: center;
+  font-family: "Raleway", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  overflow: hidden;
+}
+
+
+
+ 
+
+
