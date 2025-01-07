@@ -50,7 +50,7 @@ useEffect(() => {
 
 useEffect(() => {
   const pusher = new Pusher(process.env.REACT_APP_PUSHER_APP_KEY, {
-    cluster: 'us2',
+    cluster: 'us3',
   });
 
   const channel = pusher.subscribe(`room_${roomId}`);

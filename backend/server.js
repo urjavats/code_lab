@@ -13,7 +13,7 @@ const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,  // from your Pusher dashboard
   key: process.env.PUSHER_KEY,      // from your Pusher dashboard
   secret: process.env.PUSHER_SECRET,  // from your Pusher dashboard
-  cluster: 'us3',          // Pusher cluster (e.g., 'us2')
+  cluster: 'us3',          
   useTLS: true
 });
 
