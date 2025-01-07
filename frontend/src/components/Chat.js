@@ -20,6 +20,7 @@ function Chat({ roomId }) {
     });
     const channel = pusher.subscribe(roomId);
     channel.bind('chat_message', function(data) {
+      console.log("Received message via Pusher:", data);
       setMessages(prev => [...prev, data.message]);
     });
     return () => {
@@ -45,7 +46,7 @@ function Chat({ roomId }) {
           body: JSON.stringify(messageData),
         });
 
-        // setNewMessage(''); // Clear the input box
+        setNewMessage(''); // Clear the input box
       } catch (error) {
         console.error('Error:', error);
       }
