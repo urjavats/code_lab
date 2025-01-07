@@ -26,7 +26,7 @@ const allowedOrigins = [
 
 // Create Socket.IO instance
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
+/*const io = new Server(httpServer, {
     cors: {
       origin: ["http://localhost:3000", "https://code-lab-pu8s.vercel.app"],
       methods: ["GET", "POST"],
@@ -69,7 +69,9 @@ const io = new Server(httpServer, {
         console.log(`Broadcasting chat message to room ${data.roomId}`);
         socket.to(data.roomId).emit('receive_message', data);
       });
-  });
+  });*/
+
+
 //for accepting post form data
 const bodyParser=require('express').json;
 app.use(bodyParser());
@@ -86,11 +88,6 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
-app.use((req, res, next) => {
-  console.log("Origin:", req.headers.origin); // Logs the request origin
-  console.log("Path:", req.path); // Logs the requested path
-  next();
-});
 
 
 
@@ -98,13 +95,27 @@ const userRouter=require('./api/User');
 const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
+app.post('/code_change', (req, res) => {
+  const { roomId, code } = req.body;
+  console.log(`Code change in room ${roomId}:`, code);
 
+  // Trigger Pusher event
+  pusher.trigger(`room_${roomId}`, 'code_change', { code });
+  res.status(200).send('Code change broadcasted.');
+});
+
+app.post('/chat_message', (req, res) => {
+  const { roomId, message } = req.body;
+  console.log(`Chat message in room ${roomId}:`, message);
+
+  // Trigger Pusher event
+  pusher.trigger(`room_${roomId}`, 'chat_message', { message });
+  res.status(200).send('Chat message broadcasted.');
+});
 app.get('/', (req, res) => {
   res.send('Server is running!');
 });
-module.exports = (req, res) => {
-  httpServer.emit('request', req, res); // Forward the request to the HTTP server
-};
+module.exports = app;
 
 
 

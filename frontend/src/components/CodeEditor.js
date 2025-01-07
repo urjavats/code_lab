@@ -31,7 +31,6 @@ function CodeEditor(CodeEditorProps) {
 const [chatResponse, setChatResponse] = useState('');
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 const [pusherChannel, setPusherChannel] = useState(null);
-
 const [isChatOpen, setIsChatOpen] = useState(false);
 const [socket, setSocket] = useState(null);
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";

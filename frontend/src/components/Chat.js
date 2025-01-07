@@ -13,50 +13,51 @@ function Chat({ roomId }) {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
-    const newSocket = io(`${API_BASE_URL}`);
-    setSocket(newSocket);
-
-    // Join the specific room
-    newSocket.emit('join_room', { roomId });
-
-    // Listen for incoming messages
-    newSocket.on('receive_message', (message) => {
-      setMessages(prev => [...prev, message]);
-    });
-
+    // Initialize Pusher
     const pusher = new Pusher('your-pusher-key', {
       cluster: 'us3',
-      forceTLS: true
+      encrypted: true,
     });
     const channel = pusher.subscribe(roomId);
     channel.bind('chat_message', function(data) {
       setMessages(prev => [...prev, data.message]);
     });
     return () => {
-      newSocket.disconnect();
+      channel.unbind_all();
       pusher.unsubscribe(roomId);
     };
   }, [roomId]);
   
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (newMessage.trim() && socket) {
+    if (newMessage.trim()) {
       const messageData = {
         id: Date.now(),
         text: newMessage,
-        sender: userEmail, // Will be replaced with actual user data later
+        sender: userEmail,
         timestamp: new Date().toLocaleTimeString(),
-        roomId: roomId
+        roomId,
       };
+      try {
+        // Send message to your backend API
+        const response = await fetch(`${API_BASE_URL}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(messageData),
+        });
 
-      // Emit message to server
-      socket.emit('send_message', messageData);
-      
-      // Update local state
-      setMessages([...messages, messageData]);
-      setNewMessage('');
+        if (response.ok) {
+          setMessages([...messages, messageData]); // Optimistic update
+          setNewMessage('');
+        } else {
+          console.error('Failed to send message');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
+
 
   return (
     <div className={`chat-container ${isExpanded ? 'expanded' : ''}`}>
