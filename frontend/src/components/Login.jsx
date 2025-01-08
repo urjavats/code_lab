@@ -28,10 +28,15 @@ function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
   const navigate = useNavigate();
+
+
+
+  //handle signin
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Email:", email, "Password:", password);
@@ -72,6 +77,11 @@ function Login() {
     }
   };
   
+
+
+
+//handle signup
+
 
   useEffect(() => {
     document.body.classList.add('login-active');
