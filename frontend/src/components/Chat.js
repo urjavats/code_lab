@@ -20,55 +20,25 @@ function Chat({ roomId }) {
       encrypted: true,
       authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
     });
-    const channel = pusher.subscribe('test-channel');
+    const channel = pusher.subscribe(`private-${roomId}`); // CHANGED: Ensure correct channel subscription
 
-channel.bind('test-event', (data) => {
-  console.log('Received event data:', data);
-});
-
-//Debugging: Add listeners for connection state change
-pusher.connection.bind('state_change', (state) => {
-  console.log('Connection state changed:', state);
-});
-
-pusher.connection.bind('error', (err) => {
-  console.error('Connection error:', err);
-});
-    pusher.connection.bind('connected', () => {
-      const socketId = pusher.connection.socket_id;  // Get the socket ID
-      const channelName = `private-${roomId}`;  // This is the channel to subscribe to
-      console.log("Sending auth data:", { socket_id: socketId, channel_name: channelName });
-      // Make an authentication request to your backend with socket_id and channel_name
-      fetch('https://code-lab-five.vercel.app/pusher/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          socket_id: socketId,
-          channel_name: channelName,
-        }),
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        // After successful authentication, subscribe to the channel
-        const channel = pusher.subscribe('677a3aeb9f8febabd93203cd');
-        channel.bind('chat_message', function(data) {
-          console.log("Received message via Pusher:", data);
-          if (!sentMessages.has(data.message.timestamp)) {
-            setMessages((prevMessages) => [...prevMessages, data.message]);
-          }
-        });
-      })
-      .catch((error) => {
-        console.error('Error during Pusher auth', error);
-      });
-    });
-
-    return () => {
-      pusher.disconnect(); // Ensure cleanup of Pusher connection
+    const handleMessage = (data) => {
+      console.log("Received message via Pusher:", data);
+      if (!sentMessages.has(data.message.timestamp)) {
+        setMessages((prevMessages) => [...prevMessages, data.message]);
+        setSentMessages((prevSet) => new Set([...prevSet, data.message.timestamp])); // CHANGED: Deduplication
+      }
     };
-  }, [roomId]);
+
+    channel.bind('chat_message', handleMessage); // CHANGED: Single binding to avoid duplicates
+
+    // Cleanup on component unmount
+    return () => {
+      channel.unbind('chat_message', handleMessage); // CHANGED: Unbind specific event
+      pusher.unsubscribe(`private-${roomId}`); // CHANGED: Unsubscribe from channel
+      pusher.disconnect(); // Disconnect Pusher
+    };
+  }, [roomId, sentMessages]);
   
   const handleSendMessage = async (e) => {
     e.preventDefault();
