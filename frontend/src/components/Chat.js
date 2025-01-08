@@ -11,6 +11,7 @@ function Chat({ roomId }) {
   const [socket, setSocket] = useState(null);
   const userEmail = localStorage.getItem('userEmail');
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+  const [sentMessages, setSentMessages] = useState(new Set());
   
   useEffect(() => {
     // Initialize Pusher
