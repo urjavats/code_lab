@@ -37,7 +37,7 @@ function Chat({ roomId }) {
       .then((response) => response.json())
       .then((data) => {
         // After successful authentication, subscribe to the channel
-        const channel = pusher.subscribe('private-677a3aeb9f8febabd93203cd');
+        const channel = pusher.subscribe('677a3aeb9f8febabd93203cd');
         channel.bind('chat_message', function(data) {
           console.log("Received message via Pusher:", data);
           setMessages((prev) => [...prev, data.message]);
