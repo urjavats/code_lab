@@ -55,7 +55,7 @@ useEffect(() => {
 
   // Subscribe to the private channel
   const channelName = `private-${roomId}`;
-  const channel = pusher.subscribe(channelName);
+  const channel = pusher.subscribe(roomID);
 
   channel.bind('code_change', (data) => {
     console.log('Received code update:', data.code);
