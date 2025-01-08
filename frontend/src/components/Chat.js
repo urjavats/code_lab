@@ -54,7 +54,9 @@ pusher.connection.bind('error', (err) => {
         const channel = pusher.subscribe('677a3aeb9f8febabd93203cd');
         channel.bind('chat_message', function(data) {
           console.log("Received message via Pusher:", data);
-          setMessages((prev) => [...prev, data.message]);
+          if (!sentMessages.has(data.message.timestamp)) {
+            setMessages((prevMessages) => [...prevMessages, data.message]);
+          }
         });
       })
       .catch((error) => {
