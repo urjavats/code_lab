@@ -52,7 +52,7 @@ pusher.connection.bind('error', (err) => {
       .then((response) => response.json())
       .then((data) => {
         // After successful authentication, subscribe to the channel
-        const channel = pusher.subscribe('677a3aeb9f8febabd93203cd');
+        const channel = pusher.subscribe(`private-${roomId}`);
         channel.bind('chat_message', function(data) {
           console.log("Received message via Pusher:", data);
           if (!sentMessages.has(data.message.timestamp)) {
