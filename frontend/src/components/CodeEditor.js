@@ -48,11 +48,11 @@ useEffect(() => {
 
 
 useEffect(() => {
-  const pusher = new Pusher(process.env.REACT_APP_PUSHER_APP_KEY, {
-    cluster: 'us3',
-    encrypted: true,
-    authEndpoint: `${API_BASE_URL}/pusher/auth`,
-  });
+  const pusher = new Pusher('5d9419420d30ef661f76', {
+        cluster: 'us3',
+        encrypted: true,
+        authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
+      });
 
   const channel = pusher.subscribe(`presence-room_${roomId}`);
 

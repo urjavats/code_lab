@@ -14,11 +14,25 @@ function Chat({ roomId }) {
   
   useEffect(() => {
     // Initialize Pusher
-    const pusher = new Pusher('your-pusher-key', {
+    const pusher = new Pusher('5d9419420d30ef661f76', {
       cluster: 'us3',
       encrypted: true,
       authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
     });
+    const channel = pusher.subscribe('test-channel');
+
+channel.bind('test-event', (data) => {
+  console.log('Received event data:', data);
+});
+
+// Debugging: Add listeners for connection state changes
+pusher.connection.bind('state_change', (state) => {
+  console.log('Connection state changed:', state);
+});
+
+pusher.connection.bind('error', (err) => {
+  console.error('Connection error:', err);
+});
     pusher.connection.bind('connected', () => {
       const socketId = pusher.connection.socket_id;  // Get the socket ID
       const channelName = `private-${roomId}`;  // This is the channel to subscribe to
