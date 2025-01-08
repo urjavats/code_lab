@@ -5,11 +5,9 @@ import { useNavigate } from 'react-router-dom';
 const Register = () => {
   const [formData, setFormData] = useState({
     email: '',
-    accountType: '', 
     dateOfBirth: '',
     name: '',
-    major: '',
-    company: ''
+    password: ''
   });
 
   const [error, setError] = useState('');

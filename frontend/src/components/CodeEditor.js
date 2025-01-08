@@ -15,7 +15,6 @@ import Chat from './Chat';
 import { BsChat } from 'react-icons/bs';
 import { Problem } from '../utils/type/problem';
 import {problems} from '../utils/problems/index';
-import { io } from 'socket.io-client';
 import Pusher from 'pusher-js';
 
 
@@ -32,7 +31,6 @@ const [chatResponse, setChatResponse] = useState('');
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 const [pusherChannel, setPusherChannel] = useState(null);
 const [isChatOpen, setIsChatOpen] = useState(false);
-const [socket, setSocket] = useState(null);
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
 useEffect(() => {
@@ -48,31 +46,33 @@ useEffect(() => {
 
 
 useEffect(() => {
+  // Initialize Pusher
   const pusher = new Pusher('5d9419420d30ef661f76', {
-        cluster: 'us3',
-        encrypted: true,
-        authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
-      });
+    cluster: 'us3',
+    encrypted: true,
+    authEndpoint: `${API_BASE_URL}/pusher/auth`,
+  });
 
-  const channel = pusher.subscribe(`presence-room_${roomId}`);
+  // Subscribe to the private channel
+  const channelName = `private-${roomId}`;
+  const channel = pusher.subscribe(channelName);
 
-  
   channel.bind('code_change', (data) => {
-    console.log('Received code update from Pusher');
+    console.log('Received code update:', data.code);
     setCode(data.code);
   });
 
-  channel.bind('chat_message', (data) => {
-    console.log('Received chat message');
-    // Handle incoming chat messages
+  pusher.connection.bind('connected', () => {
+    console.log('Pusher connected for code editor');
   });
 
-  setPusherChannel(channel);
+  pusher.connection.bind('error', (err) => {
+    console.error('Pusher connection error:', err);
+  });
 
   return () => {
-    if (channel) {
-      channel.unsubscribe();
-    }
+    pusher.unsubscribe(channelName);
+    pusher.disconnect();
   };
 }, [roomId]);
 
@@ -98,7 +98,9 @@ const handleChatbot = async () => {
   const handleCodeChange = (newCode) => {
     setCode(newCode);
     // Broadcast the code change via Pusher
-    pusherChannel.trigger('client-code_change', { roomId, code: newCode });
+    if (pusherChannel) {
+      pusherChannel.trigger('client-code_change', { code: newCode });
+    }
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
