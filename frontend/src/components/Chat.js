@@ -20,7 +20,7 @@ function Chat({ roomId }) {
       encrypted: true,
       authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
     });
-    const channel = pusher.subscribe(`private-${roomId}`);
+    const channel = pusher.subscribe(`${roomId}`);
 
 channel.bind('test-event', (data) => {
   console.log('Received event data:', data);
@@ -36,7 +36,7 @@ pusher.connection.bind('error', (err) => {
 });
     pusher.connection.bind('connected', () => {
       const socketId = pusher.connection.socket_id;  // Get the socket ID
-      const channelName = `private-${roomId}`;  // This is the channel to subscribe to
+      const channelName = `${roomId}`;  // This is the channel to subscribe to
       console.log("Sending auth data:", { socket_id: socketId, channel_name: channelName });
       // Make an authentication request to your backend with socket_id and channel_name
       fetch('https://code-lab-five.vercel.app/pusher/auth', {
