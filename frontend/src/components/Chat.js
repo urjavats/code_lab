@@ -14,7 +14,7 @@ function Chat({ roomId }) {
   const [sentMessages, setSentMessages] = useState(new Set());
   
   useEffect(() => {
-    // Initialize Pusher
+    //Initialize Pusher
     const pusher = new Pusher('5d9419420d30ef661f76', {
       cluster: 'us3',
       encrypted: true,
