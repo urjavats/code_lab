@@ -25,7 +25,7 @@ channel.bind('test-event', (data) => {
   console.log('Received event data:', data);
 });
 
-// Debugging: Add listeners for connection state change
+//Debugging: Add listeners for connection state change
 pusher.connection.bind('state_change', (state) => {
   console.log('Connection state changed:', state);
 });
