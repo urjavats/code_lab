@@ -50,13 +50,16 @@ useEffect(() => {
   const pusher = new Pusher('5d9419420d30ef661f76', {
     cluster: 'us3',
     encrypted: true,
-    authEndpoint: `${API_BASE_URL}/pusher/auth`,
+    authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
   });
 
   // Subscribe to the private channel
-  const channelName = `private-${roomId}`;
-  const channel = pusher.subscribe(roomId);
-
+ const channelName = `private-document`;
+ // const channel = pusher.subscribe(roomId);
+ const channel = pusher.subscribe('private-document');
+ channel.bind('new-message', function(data) {
+  console.log('Received new message:', data);
+});
   channel.bind('code_change', (data) => {
     console.log('Received code update:', data.code);
     setCode(data.code);

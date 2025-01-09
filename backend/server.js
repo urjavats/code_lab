@@ -97,15 +97,17 @@ const userRouter=require('./api/User');
 const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
-app.post('/pusher/auth', (req, res) => {
-  console.log("Received data:", req.body);
-  const { socket_id, channel_name } = req.body;
-  if (!socket_id || !channel_name) {
-    return res.status(400).json({ error: 'Missing socket_id or channel_name' });
-  }
+app.post('/pusher/auth', function(req, res) {
+  const socketId = req.body.socket_id;
+  const channel = req.body.channel_name;
 
-  const auth = pusher.authorizeChannel(socket_id, channel_name);
-  res.send(auth);
+  // Ensure the user is authenticated and authorized to join the channel
+  if (userIsAuthenticated(req)) {
+      const authResponse = pusher.authenticate(socketId, channel);
+      res.send(authResponse);
+  } else {
+      res.status(403).send("Forbidden");
+  }
 });
 app.post('/code_change', (req, res) => {
   const { roomId, code } = req.body;
