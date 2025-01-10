@@ -98,19 +98,19 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     const userEmail = sessionStorage.getItem('userEmail');
-    setCode(newCode);
-    // Send the code update to the backend to broadcast to other users
-    fetch(`${API_BASE_URL}/code_change`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code: newCode,
-        roomId,
-        userEmail,
-      }),
-    });
+  
+    if (newCode !== code) {  // Prevent unnecessary updates
+      setCode(newCode);
+      fetch(`${API_BASE_URL}/code_change`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: newCode,
+          roomId,
+          userEmail,
+        }),
+      });
+    }
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
