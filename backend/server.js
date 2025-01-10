@@ -118,18 +118,8 @@ app.post('/update-code', (req, res) => {
   const { roomId, code } = req.body;
   
   // Trigger 'code_change' event to notify other clients
-  pusher.trigger(`private-document`, 'code_change', {
-    roomId: roomId,
-    code: code,
-  })
-    .then(() => {
-      console.log('Code update sent to channel');
-      res.status(200).send('Code updated');
-    })
-    .catch((err) => {
-      console.error('Error sending code update:', err);
-      res.status(500).send('Error updating code');
-    });
+  pusher.trigger(`private-${roomId}`, 'code_change', { code });
+  res.status(200).send('Code update sent.');
 });
 
 app.post('/code_change', (req, res) => {

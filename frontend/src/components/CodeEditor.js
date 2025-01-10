@@ -52,18 +52,15 @@ useEffect(() => {
     authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
   });
 
-  const channel = pusher.subscribe('private-document');
+  const channel = pusher.subscribe(`private-${roomId}`);
+  setPusherChannel(channel);
   console.log('Attempting to bind code_change event...');
   // Handle incoming code changes from other users
-  channel.bind('code_change', function(data) {
-    try {
-        console.log('Typing');
-        console.log('Received code update:', data.code);
-        setCode(data.code);
-    } catch (error) {
-        console.error('Error handling code change event:', error);
+  channel.bind('code_change', (data) => {
+    if (data.code !== code) {
+      setCode(data.code);
     }
-});
+  });
   console.log('Binding successful.');
   return () => {
     pusher.unsubscribe('private-document');
