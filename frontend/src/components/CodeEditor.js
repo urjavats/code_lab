@@ -55,7 +55,7 @@ useEffect(() => {
   const channel = pusher.subscribe(`private-${roomId}`);
   setPusherChannel(channel);
   // Handle incoming code changes from other users
-  channel.bind('code_update', function(data) {
+  channel.bind('code_change', function(data) {
     console.log('Received code update:', data);
     if (data.code !== editorRef.current.getValue()) {
       editorRef.current.setValue(data.code);
