@@ -53,9 +53,9 @@ useEffect(() => {
   });
 
   const channel = pusher.subscribe('private-document');
-  console.log('Typing')
   // Handle incoming code changes from other users
   channel.bind('code_change', function(data) {
+    console.log('Typing')
     console.log('Received code update:', data.code);
     setCode(data.code);  // Update the editor with new code
   });
