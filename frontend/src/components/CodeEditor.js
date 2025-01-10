@@ -46,38 +46,26 @@ useEffect(() => {
 
 
 useEffect(() => {
-  // Initialize Pusher
   const pusher = new Pusher('5d9419420d30ef661f76', {
     cluster: 'us3',
     encrypted: true,
     authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
   });
 
-  // Subscribe to the private channel
- const channelName = `private-document`;
- // const channel = pusher.subscribe(roomId);
- const channel = pusher.subscribe('private-document');
- channel.bind('new-message', function(data) {
-  console.log('Received new message:', data);
-});
-  channel.bind('code_change', (data) => {
+  const channel = pusher.subscribe('private-document');
+
+  // Handle incoming code changes from other users
+  channel.bind('code_change', function(data) {
     console.log('Received code update:', data.code);
-    setCode(data.code);
-  });
-
-  pusher.connection.bind('connected', () => {
-    console.log('Pusher connected for code editor');
-  });
-
-  pusher.connection.bind('error', (err) => {
-    console.error('Pusher connection error:', err);
+    setCode(data.code);  // Update the editor with new code
   });
 
   return () => {
-    pusher.unsubscribe(channelName);
+    pusher.unsubscribe('private-document');
     pusher.disconnect();
   };
 }, [roomId]);
+
 
 
 const handleChatbot = async () => {
