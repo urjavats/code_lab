@@ -33,6 +33,7 @@ const [pusherChannel, setPusherChannel] = useState(null);
 const [isChatOpen, setIsChatOpen] = useState(false);
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
+
 useEffect(() => {
   if (problemId && problems[problemId]) {
     setProblem(problems[problemId]);
@@ -54,11 +55,12 @@ useEffect(() => {
 
   const channel = pusher.subscribe(`private-${roomId}`);
   setPusherChannel(channel);
+  const userEmail = localStorage.getItem('userEmail');
   // Handle incoming code changes from other users
   channel.bind('code_change', function (data) {
     console.log('Received code update:', data);
 
-    if (editorRef.current) {
+    if (data.userEmail !== userEmail && editorRef.current) {
       const editorValue = editorRef.current.view.state.doc.toString(); // Accessing editor value
 
       if (data.code !== editorValue) {
@@ -95,6 +97,7 @@ const handleChatbot = async () => {
 
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
+    const userEmail = localStorage.getItem('userEmail');
     setCode(newCode);
     // Send the code update to the backend to broadcast to other users
     fetch(`${API_BASE_URL}/code_change`, {
@@ -105,6 +108,7 @@ const handleChatbot = async () => {
       body: JSON.stringify({
         code: newCode,
         roomId,
+        userEmail,
       }),
     });
   };

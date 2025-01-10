@@ -122,11 +122,11 @@ app.post('/update-code', (req, res) => {
 });
 
 app.post('/code_change', (req, res) => {
-  const { roomId, code } = req.body;
+  const { roomId, code, userEmail } = req.body;
   console.log(`Code change in room ${roomId}:`, code);
 
   // Trigger Pusher event
-  pusher.trigger(`private-${roomId}`, 'code_change', { code });
+  pusher.trigger(`private-${roomId}`, 'code_change', { code, userEmail });
   res.status(200).send('Code change broadcasted.');
 });
 
