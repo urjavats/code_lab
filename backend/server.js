@@ -77,6 +77,7 @@ const httpServer = http.createServer(app);
 //for accepting post form data
 const bodyParser=require('express').json;
 app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
   origin: function (origin, callback) {
@@ -98,7 +99,7 @@ const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 app.post('/pusher/auth', (req, res) => {
-  console.log('Request Body:', req.body); // Log the incoming request body
+  console.log('Request Body1:', req.body); // Log the incoming request body
   res.status(200).send('Log added'); // Temporary response to ensure logging works
 });
 app.post('/code_change', (req, res) => {
