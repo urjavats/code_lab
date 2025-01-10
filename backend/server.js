@@ -17,9 +17,8 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-pusher.trigger('test-channel', 'test-event', { message: 'Hello from backend' })
-  .then(() => console.log('Event sent successfully'))
-  .catch((err) => console.error('Error triggering event:', err));
+pusher.trigger('my-channel', 'code_change', { code: 'some code here' });
+console.log('code_change event published');
 const allowedOrigins = [
   "http://localhost:3000", 
   "https://code-lab-pu8s.vercel.app"
