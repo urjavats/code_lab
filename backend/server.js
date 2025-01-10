@@ -98,12 +98,8 @@ const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 app.post('/pusher/auth', (req, res) => {
-  const { socket_id, channel_name } = req.body;
-
-  // Use the `authorizeChannel` method for channel authorization
-  const auth = pusher.authorizeChannel(socket_id, channel_name);
-
-  res.send(auth); // Send the signed authorization back to the client
+  console.log('Request Body:', req.body); // Log the incoming request body
+  res.status(200).send('Log added'); // Temporary response to ensure logging works
 });
 app.post('/code_change', (req, res) => {
   const { roomId, code } = req.body;
