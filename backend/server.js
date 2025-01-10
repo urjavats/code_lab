@@ -127,7 +127,7 @@ app.post('/code_change', (req, res) => {
   console.log(`Code change in room ${roomId}:`, code);
 
   // Trigger Pusher event
-  pusher.trigger(`room_${roomId}`, 'code_change', { code });
+  pusher.trigger(`private-${roomId}`, 'code_change', { code });
   res.status(200).send('Code change broadcasted.');
 });
 

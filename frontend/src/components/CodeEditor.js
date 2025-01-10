@@ -54,16 +54,16 @@ useEffect(() => {
 
   const channel = pusher.subscribe(`private-${roomId}`);
   setPusherChannel(channel);
-  console.log('Attempting to bind code_change event...');
   // Handle incoming code changes from other users
-  channel.bind('code_change', (data) => {
-    if (data.code !== code) {
-      setCode(data.code);
+  channel.bind('code_update', function(data) {
+    console.log('Received code update:', data);
+    // Make sure the editor updates with the correct code
+    if (data.code !== editor.getValue()) {
+      editor.setValue(data.code);
     }
   });
-  console.log('Binding successful.');
   return () => {
-    pusher.unsubscribe('private-document');
+    pusher.unsubscribe(`private-${roomId}`);
     pusher.disconnect();
   };
 }, [roomId]);
