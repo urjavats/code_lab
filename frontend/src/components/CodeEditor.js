@@ -57,9 +57,8 @@ useEffect(() => {
   // Handle incoming code changes from other users
   channel.bind('code_update', function(data) {
     console.log('Received code update:', data);
-    // Make sure the editor updates with the correct code
-    if (data.code !== editor.getValue()) {
-      editor.setValue(data.code);
+    if (data.code !== editorRef.current.getValue()) {
+      editorRef.current.setValue(data.code);
     }
   });
   return () => {
@@ -257,6 +256,7 @@ const handleChatbot = async () => {
           {/* Code editor */}
           <div className="code-editor">
             <CodeMirror
+              ref={editorRef}
               value={code}
               theme={vscodeDark}
               extensions={[javascript()]}
