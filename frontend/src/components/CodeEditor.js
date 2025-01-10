@@ -25,7 +25,7 @@ function CodeEditor(CodeEditorProps) {
   const [code, setCode] = useState('');
   const [selectedTestCase, setSelectedTestCase] = useState(0);
   const [problem, setProblem] = useState(jumpGame);
-  const editorRef = useRef(null);
+  const editorRef = useRef();
   const [isChatLoading, setIsChatLoading] = useState(false);
 const [chatResponse, setChatResponse] = useState('');
 const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
@@ -55,10 +55,17 @@ useEffect(() => {
   const channel = pusher.subscribe(`private-${roomId}`);
   setPusherChannel(channel);
   // Handle incoming code changes from other users
-  channel.bind('code_change', function(data) {
+  channel.bind('code_change', function (data) {
     console.log('Received code update:', data);
-    if (data.code !== editorRef.current.getValue()) {
-      editorRef.current.setValue(data.code);
+
+    if (editorRef.current) {
+      const editorValue = editorRef.current.view.state.doc.toString(); // Accessing editor value
+
+      if (data.code !== editorValue) {
+        editorRef.current.view.dispatch({
+          changes: { from: 0, to: editorValue.length, insert: data.code },
+        });
+      }
     }
   });
   return () => {
