@@ -90,7 +90,7 @@ const handleChatbot = async () => {
   const handleCodeChange = (newCode) => {
     setCode(newCode);
     // Send the code update to the backend to broadcast to other users
-    fetch(`${API_BASE_URL}/code-update`, {
+    fetch(`${API_BASE_URL}/code_change`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
