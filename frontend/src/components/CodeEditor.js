@@ -53,6 +53,7 @@ useEffect(() => {
   });
 
   const channel = pusher.subscribe('private-document');
+  console.log('Channel Subscribed:',channel);
   // Handle incoming code changes from other users
   channel.bind('code_change', function(data) {
     console.log('Typing')
