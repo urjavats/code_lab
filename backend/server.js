@@ -77,7 +77,7 @@ const httpServer = http.createServer(app);
 //for accepting post form data
 const bodyParser=require('express').json;
 app.use(bodyParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
   origin: function (origin, callback) {
