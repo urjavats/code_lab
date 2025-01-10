@@ -53,14 +53,14 @@ useEffect(() => {
   });
 
   const channel = pusher.subscribe('private-document');
-  console.log('Channel Subscribed:',channel);
+  console.log('Attempting to bind code_change event...');
   // Handle incoming code changes from other users
   channel.bind('code_change', function(data) {
     console.log('Typing')
     console.log('Received code update:', data.code);
     setCode(data.code);  // Update the editor with new code
   });
-
+  console.log('Binding successful.');
   return () => {
     pusher.unsubscribe('private-document');
     pusher.disconnect();
