@@ -89,10 +89,17 @@ const handleChatbot = async () => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     setCode(newCode);
-    // Broadcast the code change via Pusher
-    if (pusherChannel) {
-      pusherChannel.trigger('client-code_change', { code: newCode });
-    }
+    // Send the code update to the backend to broadcast to other users
+    fetch(`${API_BASE_URL}/code-update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code: newCode,
+        roomId,
+      }),
+    });
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);

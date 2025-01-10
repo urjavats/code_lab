@@ -17,8 +17,7 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-pusher.trigger('my-channel', 'code_change', { code: 'some code here' });
-console.log('code_change event published');
+
 const allowedOrigins = [
   "http://localhost:3000", 
   "https://code-lab-pu8s.vercel.app"
@@ -116,7 +115,7 @@ app.post('/pusher/auth', (req, res) => {
 // Pusher event for sending code updates
 app.post('/update-code', (req, res) => {
   const { roomId, code } = req.body;
-  
+  console.log('Update code received for room:', roomId);
   // Trigger 'code_change' event to notify other clients
   pusher.trigger(`private-${roomId}`, 'code_change', { code });
   res.status(200).send('Code update sent.');
