@@ -99,8 +99,20 @@ const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
 app.post('/pusher/auth', (req, res) => {
-  console.log('Request Body1:', req.body); // Log the incoming request body
-  res.status(200).send('Log added'); // Temporary response to ensure logging works
+  const { socket_id, channel_name } = req.body;
+
+  // Ensure the channel_name matches your expected naming pattern (e.g., 'private-document')
+  if (channel_name.startsWith('private-')) {
+
+    // Authenticate with Pusher
+    const auth = pusher.authorizeChannel(socket_id, channel_name, presenceData);
+
+    // Respond with the Pusher authentication result
+    return res.send(auth);
+  } else {
+    // If channel name doesn't match expected pattern, return an error or reject
+    return res.status(403).send('Forbidden');
+  }
 });
 app.post('/code_change', (req, res) => {
   const { roomId, code } = req.body;
