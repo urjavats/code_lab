@@ -106,7 +106,7 @@ app.post('/pusher/auth', (req, res) => {
 
     // Authenticate with Pusher
     const auth = pusher.authorizeChannel(socket_id, channel_name);
-
+    console.log(auth);
     // Respond with the Pusher authentication result
     return res.send(auth);
   } else {
