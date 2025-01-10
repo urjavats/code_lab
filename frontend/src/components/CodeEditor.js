@@ -55,7 +55,7 @@ useEffect(() => {
 
   const channel = pusher.subscribe(`private-${roomId}`);
   setPusherChannel(channel);
-  const userEmail = localStorage.getItem('userEmail');
+  const userEmail = sessionStorage.getItem('userEmail');
   // Handle incoming code changes from other users
   channel.bind('code_change', function (data) {
     console.log('Received code update:', data);
@@ -97,7 +97,7 @@ const handleChatbot = async () => {
 
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
-    const userEmail = localStorage.getItem('userEmail');
+    const userEmail = sessionStorage.getItem('userEmail');
     setCode(newCode);
     // Send the code update to the backend to broadcast to other users
     fetch(`${API_BASE_URL}/code_change`, {

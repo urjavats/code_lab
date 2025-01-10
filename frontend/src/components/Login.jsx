@@ -61,7 +61,7 @@ function Login() {
       if (response.ok && data.status === 'SUCCESS') {
         setMessage('Login successful!');
         setError('');
-        localStorage.setItem('userEmail', email);
+        sessionStorage.setItem('userEmail', userEmail);
       setTimeout(() => {
         navigate('/home');  
       }, 2000);
