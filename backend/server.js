@@ -97,17 +97,13 @@ const userRouter=require('./api/User');
 const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
-app.post('/pusher/auth', function(req, res) {
-  const socketId = req.body.socket_id;
-  const channel = req.body.channel_name;
+app.post('/pusher/auth', (req, res) => {
+  const { socket_id, channel_name } = req.body;
 
-  // Ensure the user is authenticated and authorized to join the channel
-  if (userIsAuthenticated(req)) {
-      const authResponse = pusher.authenticate(socketId, channel);
-      res.send(authResponse);
-  } else {
-      res.status(403).send("Forbidden");
-  }
+  // Use the `authorizeChannel` method for channel authorization
+  const auth = pusher.authorizeChannel(socket_id, channel_name);
+
+  res.send(auth); // Send the signed authorization back to the client
 });
 app.post('/code_change', (req, res) => {
   const { roomId, code } = req.body;
