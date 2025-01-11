@@ -16,7 +16,7 @@ import { BsChat } from 'react-icons/bs';
 import { Problem } from '../utils/type/problem';
 import {problems} from '../utils/problems/index';
 import Pusher from 'pusher-js';
-
+import debounce from 'lodash.debounce';
 
 
 
@@ -32,9 +32,11 @@ const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY);
 const [pusherChannel, setPusherChannel] = useState(null);
 const [isChatOpen, setIsChatOpen] = useState(false);
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const lastExternalCode = useRef('');
+const userEmail = sessionStorage.getItem('userEmail');
 
 
-useEffect(() => {
+/*useEffect(() => {
   if (problemId && problems[problemId]) {
     setProblem(problems[problemId]);
     setCode(problems[problemId].starterCode);
@@ -42,6 +44,19 @@ useEffect(() => {
     // Fallback to jumpGame if no problemId is provided
     setProblem(jumpGame);
     setCode(jumpGame.starterCode);
+  }
+}, [problemId]);*/
+useEffect(() => {
+  if (problemId && problems[problemId]) {
+    setProblem(problems[problemId]);
+    if (!code) { // Only set initial code once
+      setCode(problems[problemId].starterCode);
+    }
+  } else {
+    setProblem(jumpGame);
+    if (!code) {
+      setCode(jumpGame.starterCode);
+    }
   }
 }, [problemId]);
 
@@ -57,13 +72,13 @@ useEffect(() => {
   setPusherChannel(channel);
   const userEmail = sessionStorage.getItem('userEmail');
   // Handle incoming code changes from other users
-  channel.bind('code_change', function (data) {
+  channel.bind('code_change', (data) => {
     console.log('Received code update:', data);
-
-    if (data.userEmail !== userEmail && editorRef.current) {
-      const editorValue = editorRef.current.view.state.doc.toString(); // Accessing editor value
-
-      if (data.code !== editorValue) {
+  
+    if (data.userEmail !== userEmail) {
+      const editorValue = editorRef.current?.view.state.doc.toString();
+      if (data.code !== editorValue && data.code !== lastExternalCode.current) {
+        lastExternalCode.current = data.code; // Update the reference
         editorRef.current.view.dispatch({
           changes: { from: 0, to: editorValue.length, insert: data.code },
         });
@@ -95,21 +110,22 @@ const handleChatbot = async () => {
   }
 };
 
+const debouncedCodeChange = debounce((newCode) => {
+  fetch(`${API_BASE_URL}/code_change`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      code: newCode,
+      roomId,
+      userEmail,
+    }),
+  });
+}, 500);
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
-    const userEmail = sessionStorage.getItem('userEmail');
-  
-    if (newCode !== code) {  // Prevent unnecessary updates
-      setCode(newCode);
-      fetch(`${API_BASE_URL}/code_change`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: newCode,
-          roomId,
-          userEmail,
-        }),
-      });
+    if (newCode !== code) {
+      setCode(newCode); // Update local state
+      debouncedCodeChange(newCode); // Send to backend
     }
   };
   const handleTestCaseClick = (index) => {
