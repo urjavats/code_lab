@@ -48,17 +48,22 @@ const userEmail = sessionStorage.getItem('userEmail');
 }, [problemId]);*/
 useEffect(() => {
   if (problemId && problems[problemId]) {
-    setProblem(problems[problemId]);
-    if (!code) { // Only set initial code once
+    if (problem !== problems[problemId]) {
+      setProblem(problems[problemId]);
+    }
+    if (!code || code === jumpGame.starterCode) {
       setCode(problems[problemId].starterCode);
     }
   } else {
-    setProblem(jumpGame);
-    if (!code) {
+    if (problem !== jumpGame) {
+      setProblem(jumpGame);
+    }
+    if (!code || code === problems[problemId]?.starterCode) {
       setCode(jumpGame.starterCode);
     }
   }
-}, [problemId]);
+}, [problemId, code, problem]);
+
 
 
 useEffect(() => {
