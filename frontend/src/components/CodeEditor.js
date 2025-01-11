@@ -308,8 +308,8 @@ const debouncedCodeChange = debounce((newCode) => {
               value={code}
               theme={vscodeDark}
               extensions={[javascript()]}
-              onChange={(editor, data, value) => {
-                console.log("Editor value on change:", value?.toString());
+              onChange={(value, viewUpdate) => {
+                console.log("Editor value on change:", value);
                 handleEditorChange(value);
               }}
               
