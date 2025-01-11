@@ -128,6 +128,7 @@ const debouncedCodeChange = debounce((newCode) => {
 }, 500);
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
+    console.log("Code changed locally:", newCode);
     if (newCode !== code) {
       setCode(newCode); // Update local state
       debouncedCodeChange(newCode); // Send to backend
