@@ -128,7 +128,7 @@ const debouncedCodeChange = debounce((newCode) => {
       userEmail,
     }),
   });
-}, 500);
+}, 1000);
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     console.log("Code changed locally:", newCode);
