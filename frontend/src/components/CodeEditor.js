@@ -34,6 +34,7 @@ const [isChatOpen, setIsChatOpen] = useState(false);
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 const lastExternalCode = useRef('');
 const userEmail = sessionStorage.getItem('userEmail');
+const [localUpdate, setLocalUpdate] = useState(false);
 
 
 /*useEffect(() => {
@@ -84,9 +85,10 @@ useEffect(() => {
       const editorValue = editorRef.current?.view.state.doc.toString();
       if (data.code !== editorValue && data.code !== lastExternalCode.current) {
         lastExternalCode.current = data.code; // Update the reference
-        editorRef.current.view.dispatch({
+       /* editorRef.current.view.dispatch({
           changes: { from: 0, to: editorValue.length, insert: data.code },
-        });
+        }); */
+        setCode(data.code);
       }
     }
   });
@@ -129,10 +131,15 @@ const debouncedCodeChange = debounce((newCode) => {
   // Handle code changes in the editor
   const handleCodeChange = (newCode) => {
     console.log("Code changed locally:", newCode);
-    if (newCode !== code) {
+    if (!localUpdate) {
       setCode(newCode); // Update local state
       debouncedCodeChange(newCode); // Send to backend
     }
+  };
+
+  const handleEditorChange = (newCode) => {
+    setLocalUpdate(true); // Mark as a local update
+    handleCodeChange(newCode);
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
@@ -300,7 +307,7 @@ const debouncedCodeChange = debounce((newCode) => {
               value={code}
               theme={vscodeDark}
               extensions={[javascript()]}
-              onChange={handleCodeChange}
+              onChange={(editor, data, value) => handleEditorChange(value)}
               options={{
                 lineNumbers: true,
                 tabSize: 2,
