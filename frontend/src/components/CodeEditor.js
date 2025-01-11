@@ -307,7 +307,11 @@ const debouncedCodeChange = debounce((newCode) => {
               value={code}
               theme={vscodeDark}
               extensions={[javascript()]}
-              onChange={(editor, data, value) => handleEditorChange(value)}
+              onChange={(editor, data, value) => {
+                console.log("Editor value on change:", value);
+                handleEditorChange(value);
+              }}
+              
               options={{
                 lineNumbers: true,
                 tabSize: 2,
