@@ -37,7 +37,7 @@ const userEmail = sessionStorage.getItem('userEmail');
 const [localUpdate, setLocalUpdate] = useState(false);
 
 
-/*useEffect(() => {
+useEffect(() => {
   if (problemId && problems[problemId]) {
     setProblem(problems[problemId]);
     setCode(problems[problemId].starterCode);
@@ -46,8 +46,8 @@ const [localUpdate, setLocalUpdate] = useState(false);
     setProblem(jumpGame);
     setCode(jumpGame.starterCode);
   }
-}, [problemId]);*/
-useEffect(() => {
+}, [problemId]);
+/*useEffect(() => {
   if (problemId && problems[problemId]) {
     if (problem !== problems[problemId]) {
       setProblem(problems[problemId]);
@@ -64,6 +64,7 @@ useEffect(() => {
     }
   }
 }, [problemId, code, problem]);
+*/
 
 
 
