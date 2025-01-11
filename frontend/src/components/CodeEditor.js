@@ -84,7 +84,7 @@ useEffect(() => {
   
     if (data.userEmail !== userEmail) {
       const editorValue = editorRef.current?.view.state.doc.toString();
-      if (data.code !== editorValue && data.code !== lastExternalCode.current) {
+      if (data.code !== editorValue) {
         lastExternalCode.current = data.code; // Update the reference
        /* editorRef.current.view.dispatch({
           changes: { from: 0, to: editorValue.length, insert: data.code },
@@ -133,14 +133,21 @@ const debouncedCodeChange = debounce((newCode) => {
   const handleCodeChange = (newCode) => {
     console.log("Code changed locally:", newCode);
     if (!localUpdate) {
+      console.log('localUpdate:',localUpdate);
       setCode(newCode); // Update local state
       debouncedCodeChange(newCode); // Send to backend
     }
   };
 
   const handleEditorChange = (newCode) => {
-    setLocalUpdate(true); // Mark as a local update
-    handleCodeChange(newCode);
+   // setLocalUpdate(true); // Mark as a local update
+    // handleCodeChange(newCode);
+    if (!localUpdate) {
+      setLocalUpdate(true); // Prevent circular updates
+      setCode(newCode); // Update local state
+      debouncedCodeChange(newCode); // Send changes to backend
+      setLocalUpdate(false); // Reset local update after handling
+    }
   };
   const handleTestCaseClick = (index) => {
     setSelectedTestCase(index);
