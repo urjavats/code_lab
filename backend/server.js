@@ -96,7 +96,7 @@ const userRouter=require('./api/User');
 const roomRouter=require('./api/Room');
 app.use('/user',userRouter);
 app.use('/room',roomRouter);
-app.use('/create',roomRouter);
+app.use('/', roomRouter); 
 app.post('/pusher/auth', (req, res) => {
   const { socket_id, channel_name } = req.body;
 
