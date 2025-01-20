@@ -1,5 +1,5 @@
 // Chat.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import { io } from 'socket.io-client';
 import Pusher from 'pusher-js';
@@ -12,7 +12,8 @@ function Chat({ roomId }) {
   const userEmail = sessionStorage.getItem('userEmail');
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
   const [sentMessages, setSentMessages] = useState(new Set());
-  
+  const channelRef = useRef(null);
+  const messageIdSet = useRef(new Set());
   useEffect(() => {
     // Initialize Pusher
     const pusher = new Pusher('5d9419420d30ef661f76', {
@@ -20,25 +21,26 @@ function Chat({ roomId }) {
       encrypted: true,
       authEndpoint: 'https://code-lab-five.vercel.app/pusher/auth',
     });
-    const channel = pusher.subscribe('test-channel');
+    // const channel = pusher.subscribe('test-channel');
 
-channel.bind('test-event', (data) => {
+/*channel.bind('test-event', (data) => {
   console.log('Received event data:', data);
-});
+});*/
 
 
 //Debugging: Add listeners for connection state change
-pusher.connection.bind('state_change', (state) => {
+/*pusher.connection.bind('state_change', (state) => {
   console.log('Connection state changed:', state);
-});
+});*/
 
-pusher.connection.bind('error', (err) => {
+/*pusher.connection.bind('error', (err) => {
   console.error('Connection error:', err);
-});
+});*/
+
     pusher.connection.bind('connected', () => {
       const socketId = pusher.connection.socket_id;  // Get the socket ID
-      const channelName = `private-${roomId}`;   // This is the channel to subscribe to
-      console.log("Sending auth data:", { socket_id: socketId, channel_name: channelName });
+      // const channelName = `private-${roomId}`;   // This is the channel to subscribe to
+      //console.log("Sending auth data:", { socket_id: socketId, channel_name: channelName });
       // Make an authentication request to your backend with socket_id and channel_name
       fetch('https://code-lab-five.vercel.app/pusher/auth', {
         method: 'POST',
@@ -47,17 +49,29 @@ pusher.connection.bind('error', (err) => {
         },
         body: JSON.stringify({
           socket_id: socketId,
-          channel_name: channelName,
+          channel_name: `private-${roomId}`,
         }),
       })
       .then((response) => response.json())
       .then((data) => {
         // After successful authentication, subscribe to the channel
-        const channel = pusher.subscribe(roomId);
-        channel.bind('chat_message', function(data) {
+        // const channel = pusher.subscribe(roomId);
+        channelRef.current = pusher.subscribe(roomId);
+        channelRef.current.bind('chat_message', function(data) {
           console.log("Received message via Pusher:", data);
-          if (!sentMessages.has(data.message.timestamp)) {
+          const messageId = `${data.message.timestamp}-${data.message.sender}`;
+
+          if (!messageIdSet.current.has(messageId)) {
+            // setMessages((prevMessages) => [...prevMessages, data.message]);
+            // setSentMessages((prevSent) => new Set(prevSent).add(data.message.timestamp));
+            // setMessages((prevMessages) => [...prevMessages, data.message]);
+            // setMessages((prev) => [...prev, data.message]);
+            // setSentMessages((prev) => new Set(prev).add(uniqueKey));
             setMessages((prevMessages) => [...prevMessages, data.message]);
+            messageIdSet.current.add(messageId);
+            if (!isExpanded) {
+              setIsExpanded(true);
+            }
           }
         });
       })
@@ -67,7 +81,14 @@ pusher.connection.bind('error', (err) => {
     });
 
     return () => {
-      pusher.disconnect(); // Ensure cleanup of Pusher connection
+      //channel.unbind_all();
+      //channel.unsubscribe();
+      //pusher.disconnect(); // Ensure cleanup of Pusher connection
+      if (channelRef.current) {
+        channelRef.current.unbind('chat_message'); // Unbind the event handler
+        pusher.unsubscribe(roomId); // Unsubscribe from the channel
+      }
+      pusher.disconnect();
     };
   }, [roomId]);
   
@@ -77,7 +98,8 @@ pusher.connection.bind('error', (err) => {
       const messageData = {
         text: newMessage,
         sender: userEmail,
-        timestamp: new Date().toLocaleTimeString(),
+       //  timestamp: new Date().toLocaleTimeString(),
+       timestamp: new Date().toISOString(),
         roomId,
       };
 
@@ -128,12 +150,12 @@ pusher.connection.bind('error', (err) => {
       {isExpanded && (
         <>
           <div className="messages-container">
-            {messages.map((message) => (
-              <div key={message.id || message.timestamp
-              } className={`message ${message.sender === userEmail ? 'sent' : 'received'}`}>
+            {messages.map((message,index) => (
+              <div 
+              key={`${message.id || message.timestamp}-${message.sender}-${index}`} className={`message ${message.sender === userEmail ? 'sent' : 'received'}`}>
                 <div className="message-header">
                   <span className="sender">{message.sender}</span>
-                  <span className="timestamp">{message.timestamp}</span>
+                  <span className="timestamp">{new Date(message.timestamp).toLocaleTimeString()}</span>
                 </div>
                 <div className="message-content">{message.text}</div>
               </div>
